@@ -1,5 +1,5 @@
 from artiq.experiment import *
-from artiq.coredevice.ttl import TTLOut
+from artiq.coRMOTevice.ttl import TTLOut
 from numpy import int64
 
 class testtttttt(EnvExperiment):
@@ -7,7 +7,7 @@ class testtttttt(EnvExperiment):
         self.setattr_device("core")
         self.setattr_device("core_dma")
         self.camera:TTLOut=self.get_device("ttl8")
-        self.red:TTLOut=self.get_device("ttl6")
+        self.RMOT:TTLOut=self.get_device("ttl6")
         self.MOT_Coils=self.get_device("zotino0")
         self.BMOT=self.get_device("urukul1_ch0")
         self.ZeemanSlower=self.get_device("urukul1_ch1")
@@ -113,7 +113,7 @@ class testtttttt(EnvExperiment):
 
         # Initialize the modules
         self.camera.output()
-        self.red.output()
+        self.RMOT.output()
         self.MOT_Coils.init()
         self.BMOT.cpld.init()
         self.BMOT.init()
@@ -156,8 +156,8 @@ class testtttttt(EnvExperiment):
                     self.MOT_Coils.write_dac(0, 0.52)
                     self.MOT_Coils.load()
                     
-                    # Start the modulation of red
-                self.red.on()
+                    # Start the modulation of RMOT
+                self.RMOT.on()
 
                 for i in range(7):
                     self.core_dma.playback_handle(sweep)
@@ -193,7 +193,7 @@ class testtttttt(EnvExperiment):
             delay(20*ms)
 
             # Slice 4: Compentation for shutter delay
-            self.red.off()
+            self.RMOT.off()
             delay(3*ms)
 
             # Slice 5: Detection
@@ -210,4 +210,4 @@ class testtttttt(EnvExperiment):
             # Slice 6: Headroom for 2nd cycle
             delay(1000*ms)
 
-        print("RedMOT exp complete!!")
+        print("RMOTMOT exp complete!!")

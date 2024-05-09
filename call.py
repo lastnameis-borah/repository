@@ -4,7 +4,7 @@ from repository.print import printing
 class call(EnvExperiment):
     def build(self):
         self.setattr_device("core")
-        self.print:printing
+        self.print = printing()
         
     
     @kernel
