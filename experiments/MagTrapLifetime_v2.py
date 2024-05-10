@@ -7,9 +7,9 @@ class MagneticTrapLifetime_v2(EnvExperiment):
         self.setattr_device("core")
         self.Repump707:TTLOut=self.get_device("ttl4") 
         self.BMOT:TTLOut=self.get_device("ttl6")
+        self.Flush:TTLOut=self.get_device("ttl8")
         self.Camera:TTLOut=self.get_device("ttl10")
         self.ZeemanSlower=self.get_device("urukul1_ch1")
-        self.Flush=self.get_device("urukul1_ch3")
         self.MOT_Coils=self.get_device("zotino0")
 
         self.setattr_argument("Cycles", NumberValue(default = 1))
@@ -26,15 +26,13 @@ class MagneticTrapLifetime_v2(EnvExperiment):
         self.Camera.output()
         self.BMOT.output()
         self.Repump707.output()
+        self.Flush.output()
         self.ZeemanSlower.cpld.init()
         self.ZeemanSlower.init()
-        self.Flush.cpld.init()
-        self.Flush.init()
         self.MOT_Coils.init()
         
         # Set the channel ON
         self.ZeemanSlower.sw.on()
-        self.Flush.sw.on()
         
         # Set the magnetic field constant
         self.MOT_Coils.write_dac(0, 0.52)
@@ -44,24 +42,24 @@ class MagneticTrapLifetime_v2(EnvExperiment):
 
         for i in range(int64(self.Cycles)):
             # Slice 1
+            with parallel:
+                self.BMOT.on()
+                self.Flush.off()
+                self.Repump707.off()
+                self.Camera.off()
+            
             self.ZeemanSlower.set_att(0.0)
             self.ZeemanSlower.set(frequency=180*MHz, amplitude=0.35)
-
-            self.Flush.set_att(31.9)
-            self.Flush.set(frequency=180*MHz, amplitude=0.0)
-
-            self.BMOT.on()
 
             delay(self.Loading_Time * ms)
 
             # Slice 2
+            with parallel:
+                self.BMOT.off()
+                self.Flush.on()
+            
             self.ZeemanSlower.set_att(31.9)
             self.ZeemanSlower.set(frequency=180*MHz, amplitude=0.0)
-
-            self.Flush.set_att(0.0)
-            self.Flush.set(frequency=180*MHz, amplitude=0.9)
-
-            self.BMOT.off()
 
             delay(self.Holding_Time * ms)
 

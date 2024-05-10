@@ -45,25 +45,25 @@ class blueMOT(EnvExperiment):
                 self.ZeemanSlower.set(frequency=180 * MHz, amplitude=0.35)
 
                 with sequential:
-                    self.MagField.write_dac(0, 0.52)   #0.52 = 3.5A, 1.97 = 2A, 1.76 = 2.2A, 1.04 = 1A
+                    self.MagField.write_dac(0, 0.51)   #0.52 = 3.5A, 1.97 = 2A, 1.76 = 2.2A, 1.04 = 1A
                     self.MagField.load()
 
-            #Slice 1 duration
-            delay(self.Loading_Time*ms)
+            # #Slice 1 duration
+            # delay(self.Loading_Time*ms)
 
-            #Slice 2: Detection
-            with parallel:
-                self.ZeemanSlower.set(frequency=180 * MHz, amplitude=0.00)
+            # #Slice 2: Detection
+            # with parallel:
+            #     self.ZeemanSlower.set(frequency=180 * MHz, amplitude=0.00)
 
-                # with sequential:
-                #     self.MagField.write_dac(0, 0.52)   #0.52 = 3.5A, 1.97 = 2A, 1.76 = 2.2A, 1.04 = 1A
-                #     self.MagField.load()
+            #     # with sequential:
+            #     #     self.MagField.write_dac(0, 0.52)   #0.52 = 3.5A, 1.97 = 2A, 1.76 = 2.2A, 1.04 = 1A
+            #     #     self.MagField.load()
 
-                self.Camera.pulse(5*ms)
+            #     self.Camera.pulse(5*ms)
 
-            self.BMOT_Shutter.off()
-            # We need shutter as the 0th order is still going to the chamber
-            delay(1000*ms)
+            # self.BMOT_Shutter.off()
+            # # We need shutter as the 0th order is still going to the chamber
+            # delay(1000*ms)
 
             
 
