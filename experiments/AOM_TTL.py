@@ -16,7 +16,7 @@ class AOM_and_TTL(EnvExperiment):
 
         self.Repump707:TTLOut=self.get_device("ttl4")
         self.BMOT_TTL:TTLOut=self.get_device("ttl6")
-        self.RMOT_TTL:TTLOut=self.get_device("ttl8")
+        self.Flush_TTL:TTLOut=self.get_device("ttl8")
         
 
         self.setattr_argument("BMOT_Frequency", NumberValue())
@@ -70,7 +70,7 @@ class AOM_and_TTL(EnvExperiment):
         with parallel:
             self.Repump707.on()
             self.BMOT_TTL.on()
-            self.RMOT_TTL.on()
+            self.Flush_TTL.on()
             with sequential:
                 self.MOT_Coils.write_dac(0, 0.51) #3.04
                 self.MOT_Coils.load()
