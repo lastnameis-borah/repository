@@ -53,8 +53,8 @@ class AOM_and_TTL(EnvExperiment):
         self.Probe.cpld.init()
         self.Probe.init()
 
-        self.Flush.cpld.init()
-        self.Flush.init()
+        # self.Flush.cpld.init()
+        # self.Flush.init()
 
         self.BMOT.sw.on()
         self.ZeemanSlower.sw.on()
