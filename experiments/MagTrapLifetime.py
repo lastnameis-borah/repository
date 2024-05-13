@@ -4,8 +4,14 @@ from artiq.coredevice.ttl import TTLOut
 class MagneticTrapLifetime(EnvExperiment):
     def build(self):
         self.setattr_device("core")
-        self.ttlIN1:TTLOut=self.get_device("ttl4") 
-        self.ttlIN2:TTLOut=self.get_device("ttl5")
+        self.Repump707:TTLOut=self.get_device("ttl4") 
+        self.BMOT:TTLOut=self.get_device("ttl6")
+        self.Camera:TTLOut=self.get_device("ttl10")
+
+        self.setattr_argument("Cycles", NumberValue(default = 1))
+        self.setattr_argument("Loading_Time", NumberValue(default = 2000, unit = "ms"))
+        self.setattr_argument("Holding_Time", NumberValue(default = 500, unit = "ms"))
+        self.setattr_argument("Detection_Time", NumberValue(default = 30, unit = "ms"))
 
     @kernel
     def run(self):
@@ -15,38 +21,30 @@ class MagneticTrapLifetime(EnvExperiment):
 
         delay(1000*us)
 
-        for i in range(1):
+        for i in range(self.Cycles):
 
             with parallel:
+                self.BMOT.on()
+                self.Repump707.off()
+                self.Camera.off()
+            
+            delay(self.Loading_Time*ms)
 
-                with sequential:
-                    pass
+            delay(self.Holding_Time*ms)
 
-                with sequential:
-                    pass
-                
-                with sequential:
-                    self.ttlIN1.off()
-                    delay(500 * ms)
-                    delay(1 * ms)
-                    self.ttlIN1.pulse(36 * ms)
+            with parallel:
+                self.BMOT.on()
+                self.Repump707.on()
 
-                with sequential:
-                    self.ttlIN2.pulse(500 * ms)
-                    delay(1 * ms)
-                    self.ttlIN2.pulse(36 * ms)
+            delay(3*ms)
 
+            self.Camera.pulse(self.Detection_Time*ms)
 
-        # for i in range(10):
+            with parallel:
+                self.BMOT.off()
+                self.Repump707.off()
+                self.Camera.off()
 
-        #     with parallel:
-        #         with sequential:
-        #             self.ttlIN1.pulse(10 * ms)
-        #             delay(10 * ms)
-
-        #         with sequential:
-        #             self.ttlIN2.pulse(10 * ms)
-        #             delay(10 * ms)
-
+            delay(1000*ms)
 
         print("Experiment Complete")
