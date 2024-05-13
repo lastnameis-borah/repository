@@ -12,7 +12,7 @@ class AOM_and_TTL(EnvExperiment):
         self.BMOT=self.get_device("urukul1_ch0")
         self.ZeemanSlower=self.get_device("urukul1_ch1")
         self.Probe=self.get_device("urukul1_ch2")
-        self.Flush=self.get_device("urukul1_ch3")
+        # self.Flush=self.get_device("urukul1_ch3")
 
         self.Repump707:TTLOut=self.get_device("ttl4")
         self.BMOT_TTL:TTLOut=self.get_device("ttl6")
@@ -31,9 +31,9 @@ class AOM_and_TTL(EnvExperiment):
         self.setattr_argument("Probe_Amplitude", NumberValue(default = 0.06)) 
         self.setattr_argument("Probe_Attenuation", NumberValue(default = 0.0))
 
-        self.setattr_argument("Flush_Frequency", NumberValue())
-        self.setattr_argument("Flush_Amplitude", NumberValue(default = 0.0)) 
-        self.setattr_argument("Flush_Attenuation", NumberValue(default = 0.0))
+        # self.setattr_argument("Flush_Frequency", NumberValue())
+        # self.setattr_argument("Flush_Amplitude", NumberValue(default = 0.0)) 
+        # self.setattr_argument("Flush_Attenuation", NumberValue(default = 0.0))
 
         
 
@@ -64,7 +64,7 @@ class AOM_and_TTL(EnvExperiment):
         self.BMOT.set_att(self.BMOT_Attenuation)
         self.ZeemanSlower.set_att(self.Zeeman_Attenuation)
         self.Probe.set_att(self.Probe_Attenuation)
-        self.Flush.set_att(self.Flush_Attenuation)
+        # self.Flush.set_att(self.Flush_Attenuation)
 
         
         with parallel:
@@ -84,7 +84,7 @@ class AOM_and_TTL(EnvExperiment):
         # with sequential:
         self.Probe.set(frequency=self.Probe_Frequency * MHz, amplitude=self.Probe_Amplitude)
 
-        self.Flush.set(frequency=self.Flush_Frequency * MHz, amplitude=self.Flush_Amplitude)
+        # self.Flush.set(frequency=self.Flush_Frequency * MHz, amplitude=self.Flush_Amplitude)
 
         
 
