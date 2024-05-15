@@ -12,7 +12,6 @@ class AOM_and_TTL(EnvExperiment):
         self.BMOT=self.get_device("urukul1_ch0")
         self.ZeemanSlower=self.get_device("urukul1_ch1")
         self.Probe=self.get_device("urukul1_ch2")
-        # self.Flush=self.get_device("urukul1_ch3")
 
         self.Repump707:TTLOut=self.get_device("ttl4")
         self.BMOT_TTL:TTLOut=self.get_device("ttl6")
@@ -20,7 +19,7 @@ class AOM_and_TTL(EnvExperiment):
         
 
         self.setattr_argument("BMOT_Frequency", NumberValue())
-        self.setattr_argument("BMOT_Amplitude", NumberValue(default = 0.09)) 
+        self.setattr_argument("BMOT_Amplitude", NumberValue(default = 0.09))
         self.setattr_argument("BMOT_Attenuation", NumberValue(default = 0.0))
 
         self.setattr_argument("Zeeman_Frequency", NumberValue())
@@ -31,11 +30,6 @@ class AOM_and_TTL(EnvExperiment):
         self.setattr_argument("Probe_Amplitude", NumberValue(default = 0.06)) 
         self.setattr_argument("Probe_Attenuation", NumberValue(default = 0.0))
 
-        # self.setattr_argument("Flush_Frequency", NumberValue())
-        # self.setattr_argument("Flush_Amplitude", NumberValue(default = 0.0)) 
-        # self.setattr_argument("Flush_Attenuation", NumberValue(default = 0.0))
-
-        
 
     @kernel
     def run(self):
@@ -53,8 +47,6 @@ class AOM_and_TTL(EnvExperiment):
         self.Probe.cpld.init()
         self.Probe.init()
 
-        # self.Flush.cpld.init()
-        # self.Flush.init()
 
         self.BMOT.sw.on()
         self.ZeemanSlower.sw.on()
@@ -77,14 +69,11 @@ class AOM_and_TTL(EnvExperiment):
         
         # with parallel:
         #     with sequential:
-                    
         self.BMOT.set(frequency= self.BMOT_Frequency * MHz, amplitude=self.BMOT_Amplitude)
             # with sequential:
         self.ZeemanSlower.set(frequency=self.Zeeman_Frequency * MHz, amplitude=self.Zeeman_Amplitude)
         # with sequential:
         self.Probe.set(frequency=self.Probe_Frequency * MHz, amplitude=self.Probe_Amplitude)
-
-        # self.Flush.set(frequency=self.Flush_Frequency * MHz, amplitude=self.Flush_Amplitude)
 
         
 

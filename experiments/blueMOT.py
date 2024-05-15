@@ -48,10 +48,10 @@ class blueMOT(EnvExperiment):
                     self.MagField.write_dac(0, 0.51)   #0.52 = 3.5A, 1.97 = 2A, 1.76 = 2.2A, 1.04 = 1A
                     self.MagField.load()
 
-            # #Slice 1 duration
-            # delay(self.Loading_Time*ms)
+            #Slice 1 duration
+            delay(self.Loading_Time*ms)
 
-            # #Slice 2: Detection
+            #Slice 2: Detection
             # with parallel:
             #     self.ZeemanSlower.set(frequency=180 * MHz, amplitude=0.00)
 

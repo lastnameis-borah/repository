@@ -1,5 +1,5 @@
 from artiq.experiment import *
-from artiq.coRMOTevice.ttl import TTLOut
+from artiq.coredevice.ttl import TTLOut
 from numpy import int64
 
 class testtttttt(EnvExperiment):
