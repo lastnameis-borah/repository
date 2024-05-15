@@ -93,4 +93,4 @@ class MagneticTrapLifetime_v2(EnvExperiment):
             #Slice 5
             delay(10 * ms)
 
-        print("Experiment Complete!")
+        print("Trap Lifetime Experiment Complete!")
