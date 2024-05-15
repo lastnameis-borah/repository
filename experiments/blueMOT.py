@@ -52,21 +52,12 @@ class blueMOT(EnvExperiment):
             delay(self.Loading_Time*ms)
 
             #Slice 2: Detection
-            # with parallel:
-            #     self.ZeemanSlower.set(frequency=180 * MHz, amplitude=0.00)
+            with parallel:
+                self.ZeemanSlower.set(frequency=180 * MHz, amplitude=0.00)
+                self.Camera.pulse(5*ms)
 
-            #     # with sequential:
-            #     #     self.MagField.write_dac(0, 0.52)   #0.52 = 3.5A, 1.97 = 2A, 1.76 = 2.2A, 1.04 = 1A
-            #     #     self.MagField.load()
-
-            #     self.Camera.pulse(5*ms)
-
-            # self.BMOT_Shutter.off()
-            # # We need shutter as the 0th order is still going to the chamber
-            # delay(1000*ms)
-
-            
-
-            
+            self.BMOT_Shutter.off()
+            # We need shutter as the 0th order is still going to the chamber
+            delay(1000*ms)
 
         print("We got BMOT!!")
