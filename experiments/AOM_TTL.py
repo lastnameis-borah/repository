@@ -31,6 +31,12 @@ class AOM_and_TTL(EnvExperiment):
         self.setattr_argument("Probe_Attenuation", NumberValue(default = 0.0))
 
 
+        self.TTL1:TTLOut=self.get_device("ttl12") 
+        self.TTL2:TTLOut=self.get_device("ttl14")
+        self.TTL3:TTLOut=self.get_device("ttl15")
+        self.RF=self.get_device("urukul1_ch3")
+
+
     @kernel
     def run(self):
         self.core.reset()
@@ -74,6 +80,42 @@ class AOM_and_TTL(EnvExperiment):
         self.ZeemanSlower.set(frequency=self.Zeeman_Frequency * MHz, amplitude=self.Zeeman_Amplitude)
         # with sequential:
         self.Probe.set(frequency=self.Probe_Frequency * MHz, amplitude=self.Probe_Amplitude)
+
+
+
+
+
+        # Initialize the modules
+        self.TTL1.output()
+        self.TTL2.output()
+        self.RF.cpld.init()
+        self.RF.init()
+
+        self.RF.set_att(0.0)
+        self.RF.set(frequency= 80 * MHz, amplitude=1.0)
+        
+        # Set the channel ON
+        self.RF.sw.on()
+        
+        for i in range(5):
+            with parallel:
+                self.TTL1.pulse(10*ms)
+                self.TTL3.on()
+
+            delay(100*ms)
+
+            with parallel:
+                self.TTL2.pulse(10*ms)
+                self.TTL3.off() 
+
+            delay(100*ms)
+
+
+
+
+
+
+
 
         
 
