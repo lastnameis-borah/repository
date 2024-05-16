@@ -86,8 +86,8 @@ class MagneticTrapLifetime_v2(EnvExperiment):
             delay(self.Detection_Time*ms)
             with parallel:
                 self.Camera.off()
-                self.BMOT.on()
-                self.Repump707.on()
+                self.BMOT.off()
+                self.Repump707.off()
                 self.Flush.off()
 
             #Slice 5
