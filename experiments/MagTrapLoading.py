@@ -2,7 +2,7 @@ from artiq.experiment import *
 from artiq.coredevice.ttl import TTLOut
 from numpy import int64
 
-class MagTrapLoading(EnvExperiment):
+class MagneticTrapLoading(EnvExperiment):
     def build(self):
         self.setattr_device("core")
         self.blue:TTLOut=self.get_device("ttl4")
