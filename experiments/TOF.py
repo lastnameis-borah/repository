@@ -3,7 +3,7 @@ from artiq.coredevice.ttl import TTLOut
 from numpy import int64
 from artiq.coredevice.core import Core
 
-class TOF(EnvExperiment):
+class TimeOfFlight(EnvExperiment):
     def build(self):
         self.setattr_device("core")
         self.core:Core
