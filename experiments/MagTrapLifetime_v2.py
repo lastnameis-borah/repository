@@ -91,6 +91,6 @@ class MagneticTrapLifetime_v2(EnvExperiment):
                 self.Flush.off()
 
             #Slice 5
-            delay(10 * ms)
+            delay(500 * ms)
 
         print("Trap Lifetime Experiment Complete!")
