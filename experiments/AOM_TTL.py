@@ -15,7 +15,7 @@ class AOM_and_TTL(EnvExperiment):
 
         self.Repump707:TTLOut=self.get_device("ttl4")
         self.BMOT_TTL:TTLOut=self.get_device("ttl6")
-        self.Flush_TTL:TTLOut=self.get_device("ttl8")
+        self.RMOT_TTL:TTLOut=self.get_device("ttl8")
         
 
         self.setattr_argument("BMOT_Frequency", NumberValue())
@@ -29,13 +29,6 @@ class AOM_and_TTL(EnvExperiment):
         self.setattr_argument("Probe_Frequency", NumberValue())
         self.setattr_argument("Probe_Amplitude", NumberValue(default = 0.06)) 
         self.setattr_argument("Probe_Attenuation", NumberValue(default = 0.0))
-
-
-        self.TTL1:TTLOut=self.get_device("ttl12") 
-        self.TTL2:TTLOut=self.get_device("ttl14")
-        self.TTL3:TTLOut=self.get_device("ttl15")
-        self.RF=self.get_device("urukul1_ch3")
-
 
     @kernel
     def run(self):
@@ -68,7 +61,7 @@ class AOM_and_TTL(EnvExperiment):
         with parallel:
             self.Repump707.on()
             self.BMOT_TTL.on()
-            self.Flush_TTL.on()
+            self.RMOT_TTL.on()
             with sequential:
                 self.MOT_Coils.write_dac(0, 0.51) #3.04
                 self.MOT_Coils.load()
@@ -80,43 +73,6 @@ class AOM_and_TTL(EnvExperiment):
         self.ZeemanSlower.set(frequency=self.Zeeman_Frequency * MHz, amplitude=self.Zeeman_Amplitude)
         # with sequential:
         self.Probe.set(frequency=self.Probe_Frequency * MHz, amplitude=self.Probe_Amplitude)
-
-
-
-
-
-        # Initialize the modules
-        self.TTL1.output()
-        self.TTL2.output()
-        self.RF.cpld.init()
-        self.RF.init()
-
-        self.RF.set_att(0.0)
-        self.RF.set(frequency= 80 * MHz, amplitude=1.0)
         
-        # Set the channel ON
-        self.RF.sw.on()
         
-        for i in range(5):
-            with parallel:
-                self.TTL1.pulse(10*ms)
-                self.TTL3.on()
-
-            delay(100*ms)
-
-            with parallel:
-                self.TTL2.pulse(10*ms)
-                self.TTL3.off() 
-
-            delay(100*ms)
-
-
-
-
-
-
-
-
-        
-
         print("Parameters are set")
