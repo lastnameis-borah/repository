@@ -44,6 +44,9 @@ class MagneticTrapLifetime_v2(EnvExperiment):
 
         self.BMOT_AOM.set_att(0.0)
         self.BMOT_AOM.set(frequency= self.BMOT_Frequency * MHz, amplitude=self.BMOT_Amplitude)
+
+        self.ZeemanSlower.set_att(0.0)
+        self.ZeemanSlower.set(frequency=180*MHz, amplitude=0.35)
         
         # Set the magnetic field constant
         # self.MOT_Coils.write_dac(0, 0.52)
@@ -59,8 +62,8 @@ class MagneticTrapLifetime_v2(EnvExperiment):
                 self.Repump707.off()
                 self.Camera.off()
             
-            self.ZeemanSlower.set_att(0.0)
-            self.ZeemanSlower.set(frequency=180*MHz, amplitude=0.35)
+            # self.ZeemanSlower.set_att(0.0)
+            # self.ZeemanSlower.set(frequency=180*MHz, amplitude=0.35)
 
             delay(self.Loading_Time* ms)
 
@@ -69,8 +72,8 @@ class MagneticTrapLifetime_v2(EnvExperiment):
                 self.BMOT.off()
                 self.Flush.on()
             
-            self.ZeemanSlower.set_att(31.9)
-            self.ZeemanSlower.set(frequency=180*MHz, amplitude=0.0)
+            # self.ZeemanSlower.set_att(31.9)
+            # self.ZeemanSlower.set(frequency=180*MHz, amplitude=0.0)
 
             delay(self.Holding_Time * ms)
 
@@ -86,8 +89,8 @@ class MagneticTrapLifetime_v2(EnvExperiment):
             delay(self.Detection_Time*ms)
             with parallel:
                 self.Camera.off()
-                self.BMOT.off()
-                self.Repump707.off()
+                self.BMOT.on()
+                self.Repump707.on()
                 self.Flush.off()
 
             #Slice 5

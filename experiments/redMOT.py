@@ -1,17 +1,19 @@
 from artiq.experiment import *
 from artiq.coredevice.ttl import TTLOut
-from numpy import int64, int32
-from artiq.coredevice.core import Core
+from numpy import int64
 
 class redMOT(EnvExperiment):
     def build(self):
         self.setattr_device("core")
-        self.core:Core
-        self.camera:TTLOut=self.get_device("ttl8")
-        self.red:TTLOut=self.get_device("ttl6")
-        self.ad9910_0 = self.get_device("urukul1_ch0")
-        self.ad9910_1=self.get_device("urukul1_ch1")
-        self.setattr_device("zotino0")
+        self.Camera:TTLOut=self.get_device("ttl10")
+        self.BMOT_TTL:TTLOut=self.get_device("ttl6")
+        self.RMOT_TTL:TTLOut=self.get_device("ttl8")
+        self.Broadband_On:TTLOut=self.get_device("ttl5")
+        self.Broadband_Off:TTLOut=self.get_device("ttl7")
+        self.BMOT_AOM = self.get_device("urukul1_ch0")
+        self.ZeemanSlower=self.get_device("urukul1_ch1")
+        self.Single_Freq=self.get_device("urukul1_ch3")
+        self.MOT_Coils=self.get_device("zotino0")
 
         self.setattr_argument("Cycle", NumberValue(default=1))
         self.setattr_argument("Loading_Time", NumberValue(default=550))
@@ -24,40 +26,51 @@ class redMOT(EnvExperiment):
         self.core.break_realtime()
 
         # Initialize the modules
-        self.camera.output()
-        self.red.output()
-        self.zotino0.init()
-        self.ad9910_0.cpld.init()
-        self.ad9910_0.init()
-        self.ad9910_1.cpld.init()
-        self.ad9910_1.init()
+        self.Camera.output()
+        self.BMOT_TTL.output()
+        self.RMOT_TTL.output()
+        self.MOT_Coils.init()
+        self.BMOT_AOM.cpld.init()
+        self.BMOT_AOM.init()
+        self.ZeemanSlower.cpld.init()
+        self.ZeemanSlower.init()
+        self.Single_Freq.cpld.init()
+        self.Single_Freq.init()
 
         # Set the channel ON
-        self.ad9910_0.sw.on()
-        self.ad9910_1.sw.on()
+        self.BMOT_AOM.sw.on()
+        self.ZeemanSlower.sw.on()
 
-        self.ad9910_0.set_att(0.0)
-        self.ad9910_1.set_att(0.0)
+        self.BMOT_AOM.set_att(0.0)
+        self.ZeemanSlower.set_att(0.0)
+        self.Single_Freq.set_att(0.0)
+        self.Single_Freq.set(frequency= 80 * MHz, amplitude=1.0)
 
         delay(500*ms)
 
         for i in range(int64(self.Cycle)):
+            # with parallel:
+            #     self.TTL1.pulse(10*ms)
+            #     self.RF.sw.off()
+            # delay(4*ms)
+
             # Slice 1
             # with parallel:
                 # BMOT
-            self.ad9910_0.set(frequency=90*MHz, amplitude=0.09)
+            self.BMOT_AOM.set(frequency=90*MHz, amplitude=0.09)
 
                 # Zeeman Slower
-            self.ad9910_1.set(frequency=180 * MHz, amplitude=0.35)
+            self.ZeemanSlower.set(frequency=180 * MHz, amplitude=0.35)
 
             with parallel:
                 # Magnetic field (3.5v)
                 with sequential:
-                    self.zotino0.write_dac(0, 0.52)
-                    self.zotino0.load()
+                    self.MOT_Coils.write_dac(0, 0.52)
+                    self.MOT_Coils.load()
                     
                     # Start the modulation of red
-                self.red.on()
+                self.RMOT_TTL.on()
+                self.BMOT_TTL.on()
 
             # Slice 1 duration
             delay(self.Loading_Time*ms)
@@ -67,13 +80,13 @@ class redMOT(EnvExperiment):
             # with parallel:
                 # Magnetic field (2.2A)
                 # with sequential:
-            self.zotino0.write_dac(0, 1.97) #3.04
-            self.zotino0.load()
+            self.MOT_Coils.write_dac(0, 1.97) #3.04
+            self.MOT_Coils.load()
 
                 # Zeeman Slower
                 # with sequential:
-            # self.ad9910_1.set_att(31.9)
-            self.ad9910_1.set(frequency=180 * MHz, amplitude=0.0)
+            # self.ZeemanSlower.set_att(31.9)
+            self.ZeemanSlower.set(frequency=180 * MHz, amplitude=0.0)
 
             # BMOT
             # with sequential:
@@ -82,27 +95,29 @@ class redMOT(EnvExperiment):
             for i in range(int64(steps + 1.0)):
                 amp_steps = 0.09/steps
                 amp = 0.09 - (i * amp_steps)
-                self.ad9910_0.set(frequency=90*MHz, amplitude=amp)
+                self.BMOT_AOM.set(frequency=90*MHz, amplitude=amp)
                 delay(t*ms)
 
+            self.BMOT_TTL.off()
 
             # Slice 3
             delay(self.Holding_Time*ms)
 
             # Slice 4: Compentation for shutter delay
-            self.red.off()
+            self.RMOT_TTL.off()
+            self.BMOT_TTL.on()
             delay(3*ms)
 
             # Slice 5: Detection
             with parallel:
-                self.ad9910_0.set(frequency=90*MHz, amplitude=0.09)
-                self.camera.pulse(5*ms)
+                self.BMOT_AOM.set(frequency=90*MHz, amplitude=0.09)
+                self.Camera.pulse(5*ms)
 
             delay(50*ms)
 
             # Slice 6
-            self.ad9910_1.set_att(0.0)
-            self.ad9910_1.set(frequency=180 * MHz, amplitude=0.35)
+            self.ZeemanSlower.set_att(0.0)
+            self.ZeemanSlower.set(frequency=180 * MHz, amplitude=0.35)
             
             # Slice 6: Headroom for 2nd cycle
             delay(1000*ms)

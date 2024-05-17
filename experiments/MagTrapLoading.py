@@ -2,12 +2,11 @@ from artiq.experiment import *
 from artiq.coredevice.ttl import TTLOut
 from numpy import int64
 
-class MagneticTrapLifetime_v2(EnvExperiment):
+class MagneticTrapLoading(EnvExperiment):
     def build(self):
         self.setattr_device("core")
         self.Repump707:TTLOut=self.get_device("ttl4") 
         self.BMOT:TTLOut=self.get_device("ttl6")
-        self.Flush:TTLOut=self.get_device("ttl8")
         self.Camera:TTLOut=self.get_device("ttl10")
         self.ZeemanSlower=self.get_device("urukul1_ch1")
         self.BMOT_AOM=self.get_device("urukul1_ch0")
@@ -19,9 +18,6 @@ class MagneticTrapLifetime_v2(EnvExperiment):
         self.setattr_argument("Detection_Time", NumberValue(default = 30))
         self.setattr_argument("Shutter_Delay", NumberValue(default = 7))
 
-        self.setattr_argument("BMOT_Frequency", NumberValue(default=90.0))
-        self.setattr_argument("BMOT_Amplitude", NumberValue(default = 0.09))
-
     @kernel
     def run(self):
         self.core.reset()
@@ -31,7 +27,6 @@ class MagneticTrapLifetime_v2(EnvExperiment):
         self.Camera.output()
         self.BMOT.output()
         self.Repump707.output()
-        self.Flush.output()
         self.ZeemanSlower.cpld.init()
         self.ZeemanSlower.init()
         self.BMOT_AOM.cpld.init()
@@ -43,7 +38,7 @@ class MagneticTrapLifetime_v2(EnvExperiment):
         self.BMOT_AOM.sw.on()
 
         self.BMOT_AOM.set_att(0.0)
-        self.BMOT_AOM.set(frequency= self.BMOT_Frequency * MHz, amplitude=self.BMOT_Amplitude)
+        self.BMOT_AOM.set(frequency= 90 * MHz, amplitude=0.09)
         
         # Set the magnetic field constant
         # self.MOT_Coils.write_dac(0, 0.52)
@@ -55,7 +50,6 @@ class MagneticTrapLifetime_v2(EnvExperiment):
             # Slice 1
             with parallel:
                 self.BMOT.on()
-                self.Flush.off()
                 self.Repump707.off()
                 self.Camera.off()
             
@@ -67,7 +61,6 @@ class MagneticTrapLifetime_v2(EnvExperiment):
             # Slice 2
             with parallel:
                 self.BMOT.off()
-                self.Flush.on()
             
             self.ZeemanSlower.set_att(31.9)
             self.ZeemanSlower.set(frequency=180*MHz, amplitude=0.0)
@@ -88,9 +81,8 @@ class MagneticTrapLifetime_v2(EnvExperiment):
                 self.Camera.off()
                 self.BMOT.off()
                 self.Repump707.off()
-                self.Flush.off()
 
             #Slice 5
             delay(500 * ms)
 
-        print("Trap Lifetime Experiment Complete!")
+        print("Trap Loading Experiment Complete!")
