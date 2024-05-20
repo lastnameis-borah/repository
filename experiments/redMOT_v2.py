@@ -2,7 +2,7 @@ from artiq.experiment import *
 from artiq.coredevice.ttl import TTLOut
 from numpy import int64
 
-class redMOT(EnvExperiment):
+class redMOT_v2(EnvExperiment):
     def build(self):
         self.setattr_device("core")
         self.Camera:TTLOut=self.get_device("ttl10")
@@ -54,7 +54,7 @@ class redMOT(EnvExperiment):
             #     self.RF.sw.off()
             # delay(4*ms)
 
-            # Slice 1
+            # **************************** Slice 1: Loading ****************************
             # with parallel:
                 # BMOT
             self.BMOT_AOM.set(frequency=90*MHz, amplitude=0.09)
@@ -75,12 +75,12 @@ class redMOT(EnvExperiment):
             # Slice 1 duration
             delay(self.Loading_Time*ms)
 
-            # Slice 2: Transfer
+            # **************************** Slice 2: Transfer ****************************
 
             # with parallel:
                 # Magnetic field (2.2A)
                 # with sequential:
-            self.MOT_Coils.write_dac(0, 1.95) #1.95=2.1A, 2.0=2.0A, 2.2=1.8A, 2.42=1.6A, 2.55=1.5A, 3.05=1.0A, 3.36=0.7A
+            self.MOT_Coils.write_dac(0, 1.95) 
             self.MOT_Coils.load()
 
                 # Zeeman Slower
@@ -100,26 +100,33 @@ class redMOT(EnvExperiment):
 
             self.BMOT_TTL.off()
 
-            # Slice 3
+            # **************************** Slice 3: Holding ****************************
             delay(self.Holding_Time*ms)
 
-            # Slice 4: Compentation for shutter delay
-            self.RMOT_TTL.off()
-            self.BMOT_TTL.on()
+            # **************************** Slice 4: Compression ****************************
+            self.MOT_Coils.write_dac(0, 1.44) #1.44=2.5A, 1.95=2.1A, 2.0=2.0A, 2.2=1.8A, 2.42=1.6A, 2.55=1.5A, 3.05=1.0A, 3.36=0.7A
+            self.MOT_Coils.load()
+
+            delay(8*ms)
+
+            # **************************** Slice 4: Shutter delay ****************************
+            with parallel:
+                self.RMOT_TTL.off()
+                self.BMOT_TTL.on()
             delay(3*ms)
 
-            # Slice 5: Detection
+            # **************************** Slice 5: Detection ****************************
             with parallel:
                 self.BMOT_AOM.set(frequency=90*MHz, amplitude=0.09)
                 self.Camera.pulse(5*ms)
 
             delay(50*ms)
 
-            # Slice 6
+            # **************************** Slice 6 ****************************
             self.ZeemanSlower.set_att(0.0)
             self.ZeemanSlower.set(frequency=180 * MHz, amplitude=0.35)
             
-            # Slice 6: Headroom for 2nd cycle
+            # **************************** Slice 7 ****************************
             delay(1000*ms)
 
         print("RedMOT exp complete!!")
