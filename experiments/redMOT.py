@@ -80,7 +80,7 @@ class redMOT(EnvExperiment):
             # with parallel:
                 # Magnetic field (2.2A)
                 # with sequential:
-            self.MOT_Coils.write_dac(0, 1.97) #3.04
+            self.MOT_Coils.write_dac(0, 1.95) #1.95=2.1A, 2.0=2.0A, 2.2=1.8A, 2.42=1.6A, 2.55=1.5A, 3.05=1.0A, 3.36=0.7A
             self.MOT_Coils.load()
 
                 # Zeeman Slower
