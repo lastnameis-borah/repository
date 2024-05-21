@@ -1,6 +1,7 @@
 from artiq.experiment import *
 from artiq.coredevice.ttl import TTLOut
 from numpy import int64
+# from repository.regression1 import Gate_Voltage
 
 class redMOT(EnvExperiment):
     def build(self):
@@ -49,11 +50,6 @@ class redMOT(EnvExperiment):
         delay(500*ms)
 
         for i in range(int64(self.Cycle)):
-            # with parallel:
-            #     self.TTL1.pulse(10*ms)
-            #     self.RF.sw.off()
-            # delay(4*ms)
-
             # Slice 1
             # with parallel:
                 # BMOT
@@ -63,9 +59,9 @@ class redMOT(EnvExperiment):
             self.ZeemanSlower.set(frequency=180 * MHz, amplitude=0.35)
 
             with parallel:
-                # Magnetic field (3.5v)
+                # Magnetic field (3.0v)
                 with sequential:
-                    self.MOT_Coils.write_dac(0, 0.52)
+                    self.MOT_Coils.write_dac(0, 0.91)
                     self.MOT_Coils.load()
                     
                     # Start the modulation of red
@@ -80,7 +76,8 @@ class redMOT(EnvExperiment):
             # with parallel:
                 # Magnetic field (2.2A)
                 # with sequential:
-            self.MOT_Coils.write_dac(0, 1.95) #1.95=2.1A, 2.0=2.0A, 2.2=1.8A, 2.42=1.6A, 2.55=1.5A, 3.05=1.0A, 3.36=0.7A
+            # print(f"{Gate_Voltage(2.1)[0][0]:.2f}")
+            self.MOT_Coils.write_dac(0, 0.91) #1.95=2.1A, 2.0=2.0A, 2.2=1.8A, 2.42=1.6A, 2.55=1.5A, 3.05=1.0A, 3.36=0.7A
             self.MOT_Coils.load()
 
                 # Zeeman Slower
