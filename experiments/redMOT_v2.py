@@ -49,10 +49,10 @@ class redMOT_v2(EnvExperiment):
         delay(500*ms)
 
         for i in range(int64(self.Cycle)):
-            # with parallel:
-            #     self.TTL1.pulse(10*ms)
-            #     self.RF.sw.off()
-            # delay(4*ms)
+            with parallel:
+                self.Broadband_On.pulse(10*ms)
+                self.Single_Freq.sw.off()
+            delay(4*ms)
 
             # **************************** Slice 1: Loading ****************************
             # with parallel:
@@ -80,7 +80,8 @@ class redMOT_v2(EnvExperiment):
             # with parallel:
                 # Magnetic field (2.2A)
                 # with sequential:
-            self.MOT_Coils.write_dac(0, 1.95) 
+            voltage = 1.95
+            self.MOT_Coils.write_dac(0,voltage) 
             self.MOT_Coils.load()
 
                 # Zeeman Slower
@@ -92,9 +93,9 @@ class redMOT_v2(EnvExperiment):
             # with sequential:
             steps = self.Transfer_Time
             t = self.Transfer_Time/steps
-            for i in range(int64(steps + 1.0)):
+            for i in range(int64(steps)):
                 amp_steps = 0.09/steps
-                amp = 0.09 - (i * amp_steps)
+                amp = 0.09 - ((i+1) * amp_steps)
                 self.BMOT_AOM.set(frequency=90*MHz, amplitude=amp)
                 delay(t*ms)
 
@@ -104,12 +105,22 @@ class redMOT_v2(EnvExperiment):
             delay(self.Holding_Time*ms)
 
             # **************************** Slice 4: Compression ****************************
-            self.MOT_Coils.write_dac(0, 1.44) #1.44=2.5A, 1.95=2.1A, 2.0=2.0A, 2.2=1.8A, 2.42=1.6A, 2.55=1.5A, 3.05=1.0A, 3.36=0.7A
-            self.MOT_Coils.load()
+            steps_com = 8
+            t = 8/steps_com
+            for i in range(int64(steps_com)):
+                voltage_com = voltage - ((i + 1) * ((voltage - 1.44)/steps_com))
+                self.MOT_Coils.write_dac(0, voltage_com)
+                self.MOT_Coils.load()
+                delay(t*ms)
 
-            delay(8*ms)
+            #0.52=3.5A, 0.91=3.0A, 1.44=2.5A, 1.95=2.1A, 2.0=2.0A, 2.2=1.8A, 2.42=1.6A, 2.55=1.5A, 3.05=1.0A, 3.36=0.7A
 
-            # **************************** Slice 4: Shutter delay ****************************
+            # **************************** Slice 5: Single Frequency ****************************
+            self.Broadband_Off.pulse(10*ms)
+            delay(8.5*ms)
+            self.Single_Freq.sw.on()
+
+            # **************************** Slice 6: Shutter delay ****************************
             with parallel:
                 self.RMOT_TTL.off()
                 self.BMOT_TTL.on()
