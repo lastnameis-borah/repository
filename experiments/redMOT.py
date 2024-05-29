@@ -77,8 +77,8 @@ class redMOT(EnvExperiment):
                 # Magnetic field (2.2A)
                 # with sequential:
             # print(f"{Gate_Voltage(2.1)[0][0]:.2f}")
-            self.MOT_Coils.write_dac(0, 1.95) 
-            #1.23=2.7A, 1.55=2.4A, 1.95=2.1A, 2.0=2.0A, 2.2=1.8A, 2.42=1.6A, 2.55=1.5A, 3.05=1.0A, 3.36=0.7A
+            self.MOT_Coils.write_dac(0, 2.00)
+            #1.23=2.7A, 1.55=2.4A, 1.95=2.1A, 2.0=2.0A, 2.26=1.8A, 2.42=1.6A, 2.55=1.5A, 2.85=1.2A, 3.05=1.0A, 3.18=0.9A, 3.36=0.7A, 3.5=0.6A
             self.MOT_Coils.load()
 
                 # Zeeman Slower
