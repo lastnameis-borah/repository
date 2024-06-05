@@ -18,7 +18,7 @@ class redMOT_v2(EnvExperiment):
         self.setattr_argument("Cycle", NumberValue(default=1))
         self.setattr_argument("Loading_Time", NumberValue(default=550))
         self.setattr_argument("Transfer_Time", NumberValue(default=20))
-        self.setattr_argument("Holding_Time", NumberValue(default=10))
+        self.setattr_argument("Holding_Time", NumberValue(default=5))
 
     @kernel
     def run(self):
