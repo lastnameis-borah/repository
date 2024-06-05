@@ -1,1 +1,1 @@
-### This is developmental branch to the transportable clock's ARTIQ repo.
+### This is the developmental branch of the transportable clock's ARTIQ repo.
