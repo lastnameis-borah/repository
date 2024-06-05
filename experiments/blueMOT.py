@@ -1,19 +1,16 @@
 from artiq.experiment import *
 from artiq.coredevice.ttl import TTLOut
-from numpy import int64, int32
-from artiq.coredevice.core import Core
+from numpy import int64
 
-class blueMOT(EnvExperiment):
+class blueMOT_probe(EnvExperiment):
     def build(self):
         self.setattr_device("core")
-        self.core:Core
-        self.BMOT = self.get_device("urukul1_ch0")
-        self.BMOT_Shutter:TTLOut=self.get_device("ttl4")
-        self.ZeemanSlower = self.get_device("urukul1_ch1")
-        self.Camera:TTLOut = self.get_device("ttl8")
-        self.MagField = self.get_device("zotino0")
+        self.Camera:TTLOut=self.get_device("ttl15")
+        self.BMOT_AOM = self.get_device("urukul1_ch0")
+        self.ZeemanSlower=self.get_device("urukul1_ch1")
+        self.MOT_Coils=self.get_device("zotino0")
 
-        self.setattr_argument("Cycles", NumberValue(default=1))
+        self.setattr_argument("Cycle", NumberValue(default=1))
         self.setattr_argument("Loading_Time", NumberValue(default=500))
 
     @kernel
@@ -23,41 +20,51 @@ class blueMOT(EnvExperiment):
 
         # Initialize the modules
         self.Camera.output()
-        self.MagField.init()
-        self.BMOT.cpld.init()
-        self.BMOT.init()
+        self.MOT_Coils.init()
+        self.BMOT_AOM.cpld.init()
+        self.BMOT_AOM.init()
         self.ZeemanSlower.cpld.init()
         self.ZeemanSlower.init()
 
-        # Set the channel ON
-        self.BMOT.sw.on()
-        self.ZeemanSlower.sw.on()
-
-        self.BMOT.set_att(0.0)
+        self.BMOT_AOM.set_att(0.0)
+        self.BMOT_AOM.set(frequency=90*MHz, amplitude=0.09)
         self.ZeemanSlower.set_att(0.0)
-        
-        for i in range(int64(self.Cycles)):
-            #Slice 1: Loading
-            self.BMOT_Shutter.on()
-            self.BMOT.set(frequency=90*MHz, amplitude=0.09)
+        self.ZeemanSlower.set(frequency=180 * MHz, amplitude=0.35)
 
+        delay(500*ms)
+
+        for i in range(int64(self.Cycle)):
+            # **************************** Slice 1: Loading ****************************
             with parallel:
-                self.ZeemanSlower.set(frequency=180 * MHz, amplitude=0.35)
-
                 with sequential:
-                    self.MagField.write_dac(0, 0.51)   #0.52 = 3.5A, 1.97 = 2A, 1.76 = 2.2A, 1.04 = 1A
-                    self.MagField.load()
+                    self.MOT_Coils.write_dac(0, 0.52)
+                    self.MOT_Coils.load()
+                self.BMOT_AOM.sw.on()
+                self.ZeemanSlower.sw.on()
 
-            #Slice 1 duration
+            # Loading duration
             delay(self.Loading_Time*ms)
 
-            #Slice 2: Detection
-            with parallel:
-                self.ZeemanSlower.set(frequency=180 * MHz, amplitude=0.00)
-                self.Camera.pulse(5*ms)
+            # **************************** Slice 2: Holding ****************************
+            self.BMOT_AOM.sw.off()
+            self.ZeemanSlower.sw.off()
+            with sequential:
+                    self.MOT_Coils.write_dac(0, 4.13)
+                    self.MOT_Coils.load()
 
-            self.BMOT_Shutter.off()
-            # We need shutter as the 0th order is still going to the chamber
+            # Holding duration
+            delay(5*ms)
+
+            # **************************** Slice 3: Detection ****************************
+            with parallel:
+                with sequential:
+                    self.MOT_Coils.write_dac(0, 0.52)
+                    self.MOT_Coils.load()
+                self.BMOT_AOM.sw.on()
+                self.Camera.pulse(10*ms)
+            self.BMOT_AOM.sw.off()
+            
+            # **************************** Slice 4 ****************************
             delay(1000*ms)
 
-        print("We got BMOT!!")
+        print("BlueMOT exp complete!!")
