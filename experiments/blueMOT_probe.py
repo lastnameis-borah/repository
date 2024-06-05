@@ -69,4 +69,4 @@ class blueMOT_probe(EnvExperiment):
             # **************************** Slice 4 ****************************
             delay(1000*ms)
 
-        print("BlueMOT exp complete!!")
+        print("We got BlueMOT!")

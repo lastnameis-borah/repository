@@ -2,7 +2,7 @@ from artiq.experiment import *
 from artiq.coredevice.ttl import TTLOut
 from numpy import int64
 
-class blueMOT_probe(EnvExperiment):
+class blueMOT(EnvExperiment):
     def build(self):
         self.setattr_device("core")
         self.Camera:TTLOut=self.get_device("ttl15")
@@ -67,4 +67,4 @@ class blueMOT_probe(EnvExperiment):
             # **************************** Slice 4 ****************************
             delay(1000*ms)
 
-        print("BlueMOT exp complete!!")
+        print("We got BlueMOT!")
