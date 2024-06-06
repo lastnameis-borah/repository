@@ -122,17 +122,17 @@ class redMOT_v3(EnvExperiment):
             #0.52=3.5A, 0.91=3.0A, 1.44=2.5A, 1.95=2.1A, 2.0=2.0A, 2.2=1.8A, 2.42=1.6A, 2.55=1.5A, 3.05=1.0A, 3.36=0.7A
 
             # **************************** Slice 5: Single Frequency ****************************
-            # with parallel:
-            #     self.Broadband_Off.pulse(10*ms)
-            #     self.Single_Freq.sw.on()
+            with parallel:
+                self.Broadband_Off.pulse(10*ms)
+                self.Single_Freq.sw.on()
 
-            # delay(10*ms)
+            delay(10*ms)
 
             # **************************** Slice 6: Shutter delay ****************************
             with parallel:
                 self.RMOT_TTL.off()
                 self.Single_Freq.sw.off()
-                self.Probe.sw.on()
+                # self.Probe.sw.on()
                 self.BMOT_TTL.on()
             delay(3*ms)
 
@@ -140,6 +140,7 @@ class redMOT_v3(EnvExperiment):
             with parallel:
                 self.Camera.pulse(10*ms)
                 self.BMOT_AOM.set(frequency=90*MHz, amplitude=0.09)
+                # self.Probe.set(frequency= 65 * MHz, amplitude=0.25)
             # self.Probe.sw.off()
             
             # **************************** Slice 7 ****************************
