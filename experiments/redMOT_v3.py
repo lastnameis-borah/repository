@@ -48,6 +48,7 @@ class redMOT_v3(EnvExperiment):
         self.BMOT_AOM.set_att(0.0)
         self.ZeemanSlower.set_att(0.0)
         self.Probe.set_att(0.0)
+        self.Probe.set(frequency= 65 * MHz, amplitude=0.17)
         self.Single_Freq.set_att(0.0)
         self.Single_Freq.set(frequency= 80 * MHz, amplitude=1.0)
 
@@ -132,23 +133,17 @@ class redMOT_v3(EnvExperiment):
             with parallel:
                 self.RMOT_TTL.off()
                 self.Single_Freq.sw.off()
-                # self.Probe.sw.on()
                 self.BMOT_TTL.on()
             delay(3*ms)
 
             # **************************** Slice 5: Detection ****************************
             with parallel:
-                self.Camera.pulse(10*ms)
+                # self.Probe.sw.on()
                 self.BMOT_AOM.set(frequency=90*MHz, amplitude=0.09)
-                # self.Probe.set(frequency= 65 * MHz, amplitude=0.25)
+                self.Camera.pulse(10*ms)
             # self.Probe.sw.off()
             
             # **************************** Slice 7 ****************************
-            
-            # with parallel:
-
-                # self.Broadband_On.pulse(10*ms)
-                # self.ZeemanSlower.set(frequency=180 * MHz, amplitude=0.35)
             delay(1000*ms)
 
         print("RedMOT exp complete!!")
