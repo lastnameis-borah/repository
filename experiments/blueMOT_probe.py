@@ -58,7 +58,7 @@ class blueMOT_probe(EnvExperiment):
                     self.MOT_Coils.load()
 
             # Holding duration
-            delay(5*ms)
+            delay(3*ms)
 
             # **************************** Slice 3: Detection ****************************
             with parallel:
