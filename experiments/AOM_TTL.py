@@ -27,7 +27,7 @@ class AOM_and_TTL(EnvExperiment):
         self.setattr_argument("Zeeman_Attenuation", NumberValue(default = 0.0))
 
         self.setattr_argument("Probe_Frequency", NumberValue())
-        self.setattr_argument("Probe_Amplitude", NumberValue(default = 0.06)) 
+        self.setattr_argument("Probe_Amplitude", NumberValue(default = 0.17)) 
         self.setattr_argument("Probe_Attenuation", NumberValue(default = 0.0))
 
     @kernel
@@ -49,7 +49,7 @@ class AOM_and_TTL(EnvExperiment):
 
         self.BMOT.sw.on()
         self.ZeemanSlower.sw.on()
-        self.Probe.sw.on()
+        # self.Probe.sw.on()
         # self.Flush.sw.on()
 
         self.BMOT.set_att(self.BMOT_Attenuation)
@@ -72,7 +72,7 @@ class AOM_and_TTL(EnvExperiment):
             # with sequential:
         self.ZeemanSlower.set(frequency=self.Zeeman_Frequency * MHz, amplitude=self.Zeeman_Amplitude)
         # with sequential:
-        self.Probe.set(frequency=self.Probe_Frequency * MHz, amplitude=self.Probe_Amplitude)
+        # self.Probe.set(frequency=self.Probe_Frequency * MHz, amplitude=self.Probe_Amplitude)
         
         
         print("Parameters are set")
