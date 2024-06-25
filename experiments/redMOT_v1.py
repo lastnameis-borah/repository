@@ -43,11 +43,12 @@ class redMOT_v1(EnvExperiment):
         # Set the channel ON
         self.BMOT_AOM.sw.on()
         self.ZeemanSlower.sw.on()
-        # self.Probe.sw.on()
+        self.Probe.sw.on()
 
         self.BMOT_AOM.set_att(0.0)
         self.ZeemanSlower.set_att(0.0)
         self.Probe.set_att(0.0)
+        self.Probe.set(frequency= 65 * MHz, amplitude=0.0)
         self.Single_Freq.set_att(0.0)
         self.Single_Freq.set(frequency= 80 * MHz, amplitude=1.0)
 
@@ -60,9 +61,6 @@ class redMOT_v1(EnvExperiment):
 
             # Zeeman Slower
             self.ZeemanSlower.set(frequency=180 * MHz, amplitude=0.35)
-
-            # Probe
-            self.Probe.set(frequency= 65 * MHz, amplitude=0.25)
 
             with parallel:
                 with sequential:
@@ -132,16 +130,15 @@ class redMOT_v1(EnvExperiment):
             with parallel:
                 self.RMOT_TTL.off()
                 # self.Single_Freq.sw.off()
-                self.Probe.sw.on()
-                self.BMOT_TTL.on()
+                # self.BMOT_TTL.on()
             delay(3*ms)
 
             # **************************** Slice 5: Detection ****************************
             with parallel:
+                # self.BMOT_AOM.set(frequency=90*MHz, amplitude=0.09)
+                self.Probe.set(frequency= 65*MHz, amplitude=0.17)
                 self.Camera.pulse(10*ms)
-                self.BMOT_AOM.set(frequency=90*MHz, amplitude=0.09)
-                self.Probe.set(frequency= 65*MHz, amplitude=0.25)
-            # self.Probe.sw.off()
+            self.Probe.set(frequency= 65*MHz, amplitude=0.00)
             
             # **************************** Slice 7 ****************************
             

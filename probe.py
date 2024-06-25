@@ -7,7 +7,7 @@ class probe(EnvExperiment):
         self.setattr_device("core")
         self.core:Core
 
-        self.Probe=self.get_device("urukul1_ch3")
+        self.Probe=self.get_device("urukul1_ch2")
 
         self.setattr_argument("Probe_Amplitude", NumberValue(default = 0.17)) 
 
@@ -20,18 +20,18 @@ class probe(EnvExperiment):
         self.Probe.init()
         
 
-        for i in range(20):
+        for i in range(1):
             self.Probe.sw.on()
 
             self.Probe.set_att(0.0)
 
             self.Probe.set(frequency=65 * MHz, amplitude=self.Probe_Amplitude)
 
-            delay(1*us)
+            # delay(1*us)
             
-            self.Probe.sw.off()
+            # self.Probe.sw.off()
 
-            delay(1*us)
+            # delay(1*us)
         
         
         print("Parameters are set")

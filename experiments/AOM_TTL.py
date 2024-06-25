@@ -49,7 +49,7 @@ class AOM_and_TTL(EnvExperiment):
 
         self.BMOT.sw.on()
         self.ZeemanSlower.sw.on()
-        # self.Probe.sw.on()
+        self.Probe.sw.on()
         # self.Flush.sw.on()
 
         self.BMOT.set_att(self.BMOT_Attenuation)
@@ -63,16 +63,16 @@ class AOM_and_TTL(EnvExperiment):
             self.BMOT_TTL.on()
             self.RMOT_TTL.on()
             with sequential:
-                self.MOT_Coils.write_dac(0, 0.51) #3.04
+                self.MOT_Coils.write_dac(0, 1.0) #3.04
                 self.MOT_Coils.load()
         
         # with parallel:
-        #     with sequential:
+        #     with sequential: 
         self.BMOT.set(frequency= self.BMOT_Frequency * MHz, amplitude=self.BMOT_Amplitude)
             # with sequential:
         self.ZeemanSlower.set(frequency=self.Zeeman_Frequency * MHz, amplitude=self.Zeeman_Amplitude)
         # with sequential:
-        # self.Probe.set(frequency=self.Probe_Frequency * MHz, amplitude=self.Probe_Amplitude)
+        self.Probe.set(frequency=self.Probe_Frequency * MHz, amplitude=self.Probe_Amplitude)
         
         
         print("Parameters are set")
