@@ -11,16 +11,11 @@ class MagneticTrapLifetime_v2(EnvExperiment):
         self.Camera:TTLOut=self.get_device("ttl10")
         self.ZeemanSlower=self.get_device("urukul1_ch1")
         self.BMOT_AOM=self.get_device("urukul1_ch0")
-        # self.MOT_Coils=self.get_device("zotino0")
+        self.MOT_Coils=self.get_device("zotino0")
 
         self.setattr_argument("Cycles", NumberValue(default = 1))
         self.setattr_argument("Loading_Time", NumberValue(default = 3000))
         self.setattr_argument("Holding_Time", NumberValue(default = 10))
-        self.setattr_argument("Detection_Time", NumberValue(default = 30))
-        self.setattr_argument("Shutter_Delay", NumberValue(default = 7))
-
-        self.setattr_argument("BMOT_Frequency", NumberValue(default=90.0))
-        self.setattr_argument("BMOT_Amplitude", NumberValue(default = 0.09))
 
     @kernel
     def run(self):
@@ -36,21 +31,14 @@ class MagneticTrapLifetime_v2(EnvExperiment):
         self.ZeemanSlower.init()
         self.BMOT_AOM.cpld.init()
         self.BMOT_AOM.init()
-        # self.MOT_Coils.init()
+        self.MOT_Coils.init()
         
         # Set the channel ON
         self.ZeemanSlower.sw.on()
         self.BMOT_AOM.sw.on()
 
         self.BMOT_AOM.set_att(0.0)
-        self.BMOT_AOM.set(frequency= self.BMOT_Frequency * MHz, amplitude=self.BMOT_Amplitude)
-
         self.ZeemanSlower.set_att(0.0)
-        self.ZeemanSlower.set(frequency=180*MHz, amplitude=0.35)
-        
-        # Set the magnetic field constant
-        # self.MOT_Coils.write_dac(0, 0.52)
-        # self.MOT_Coils.load()
 
         delay(1000*ms)
 
@@ -61,9 +49,12 @@ class MagneticTrapLifetime_v2(EnvExperiment):
                 self.Flush.off()
                 self.Repump707.off()
                 self.Camera.off()
+
+            self.BMOT_AOM.set(frequency= 90 * MHz, amplitude=0.05)
+            self.ZeemanSlower.set(frequency=180*MHz, amplitude=0.35)
             
-            # self.ZeemanSlower.set_att(0.0)
-            # self.ZeemanSlower.set(frequency=180*MHz, amplitude=0.35)
+            self.MOT_Coils.write_dac(0, 1.0)
+            self.MOT_Coils.load()
 
             delay(self.Loading_Time* ms)
 
@@ -71,9 +62,6 @@ class MagneticTrapLifetime_v2(EnvExperiment):
             with parallel:
                 self.BMOT.off()
                 self.Flush.on()
-            
-            # self.ZeemanSlower.set_att(31.9)
-            # self.ZeemanSlower.set(frequency=180*MHz, amplitude=0.0)
 
             delay(self.Holding_Time * ms)
 
@@ -82,11 +70,12 @@ class MagneticTrapLifetime_v2(EnvExperiment):
                 self.BMOT.on()
                 self.Repump707.on()
 
-            delay(self.Shutter_Delay*ms)
+            delay(3*ms)
 
             #Slice 4
             self.Camera.on()
-            delay(self.Detection_Time*ms)
+            delay(30*ms)
+            
             with parallel:
                 self.Camera.off()
                 self.BMOT.on()
