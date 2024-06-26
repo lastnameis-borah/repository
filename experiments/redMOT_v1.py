@@ -57,14 +57,14 @@ class redMOT_v1(EnvExperiment):
         for i in range(int64(self.Cycle)):
             # **************************** Slice 1: Loading ****************************
             # BMOT
-            self.BMOT_AOM.set(frequency=90*MHz, amplitude=0.09)
+            self.BMOT_AOM.set(frequency=90*MHz, amplitude=0.05)
 
             # Zeeman Slower
             self.ZeemanSlower.set(frequency=180 * MHz, amplitude=0.35)
 
             with parallel:
                 with sequential:
-                    voltage = 0.52
+                    voltage = 1.0
                     self.MOT_Coils.write_dac(0, voltage)
                     self.MOT_Coils.load()
                 self.BMOT_TTL.on()
@@ -81,7 +81,7 @@ class redMOT_v1(EnvExperiment):
             # with parallel:
                 # Magnetic field (2.2A)
                 # with sequential:
-            voltage = 3.36
+            voltage = 3.45
             self.MOT_Coils.write_dac(0,voltage) 
             self.MOT_Coils.load()
             #0.52=3.5A, 0.91=3.0A, 1.44=2.5A, 1.95=2.1A, 2.0=2.0A, 2.2=1.8A, 2.42=1.6A, 2.55=1.5A, 3.05=1.0A, 3.36=0.7A
@@ -107,7 +107,7 @@ class redMOT_v1(EnvExperiment):
             delay(self.Holding_Time*ms)
 
             # **************************** Slice 4: Compression ****************************
-            # voltage_com = 2.55
+            # voltage_com = 2.57
             # steps_com = 8
             # t = 8/steps_com
             # change = (voltage - voltage_com)/steps_com
@@ -128,14 +128,16 @@ class redMOT_v1(EnvExperiment):
 
             # **************************** Slice 6: Shutter delay ****************************
             with parallel:
+                with sequential:
+                    self.MOT_Coils.write_dac(0,4.07) 
+                    self.MOT_Coils.load()
                 self.RMOT_TTL.off()
-                # self.Single_Freq.sw.off()
                 # self.BMOT_TTL.on()
             delay(3*ms)
 
             # **************************** Slice 5: Detection ****************************
             with parallel:
-                # self.BMOT_AOM.set(frequency=90*MHz, amplitude=0.09)
+                # self.BMOT_AOM.set(frequency=90*MHz, amplitude=0.05)
                 self.Probe.set(frequency= 65*MHz, amplitude=0.17)
                 self.Camera.pulse(10*ms)
             self.Probe.set(frequency= 65*MHz, amplitude=0.00)
