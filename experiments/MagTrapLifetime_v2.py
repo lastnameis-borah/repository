@@ -53,8 +53,8 @@ class MagneticTrapLifetime_v2(EnvExperiment):
             self.BMOT_AOM.set(frequency= 90 * MHz, amplitude=0.05)
             self.ZeemanSlower.set(frequency=180*MHz, amplitude=0.35)
             
-            self.MOT_Coils.write_dac(0, 1.0)
-            self.MOT_Coils.load()
+            # self.MOT_Coils.write_dac(0, 1.0)
+            # self.MOT_Coils.load()
 
             delay(self.Loading_Time* ms)
 
@@ -73,11 +73,9 @@ class MagneticTrapLifetime_v2(EnvExperiment):
             delay(3*ms)
 
             #Slice 4
-            self.Camera.on()
-            delay(30*ms)
-            
+            self.Camera.pulse(30*ms)
+
             with parallel:
-                self.Camera.off()
                 self.BMOT.on()
                 self.Repump707.on()
                 self.Flush.off()

@@ -5,7 +5,7 @@ from numpy import int64
 class blueMOT_probe_v1(EnvExperiment):
     def build(self):
         self.setattr_device("core")
-        self.Camera:TTLOut=self.get_device("ttl15")
+        self.Camera:TTLOut=self.get_device("ttl10")
         self.BMOT_AOM = self.get_device("urukul1_ch0")
         self.ZeemanSlower=self.get_device("urukul1_ch1")
         self.Probe=self.get_device("urukul1_ch2")
