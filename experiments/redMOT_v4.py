@@ -2,7 +2,7 @@ from artiq.experiment import *
 from artiq.coredevice.ttl import TTLOut
 from numpy import int64
 
-class redMOT_v3(EnvExperiment):
+class redMOT_v4(EnvExperiment):
     def build(self):
         self.setattr_device("core")
         self.Camera:TTLOut=self.get_device("ttl15")
@@ -43,14 +43,14 @@ class redMOT_v3(EnvExperiment):
         # Set the channel ON
         self.BMOT_AOM.sw.on()
         self.ZeemanSlower.sw.on()
-        # self.Probe.sw.on()
+        self.Single_Freq.sw.on()
+        self.Probe.sw.on()
 
         self.BMOT_AOM.set_att(0.0)
         self.ZeemanSlower.set_att(0.0)
         self.Probe.set_att(0.0)
         self.Probe.set(frequency= 65 * MHz, amplitude=0.17)
         self.Single_Freq.set_att(0.0)
-        self.Single_Freq.set(frequency= 80 * MHz, amplitude=1.0)
 
         delay(500*ms)
 
@@ -62,6 +62,9 @@ class redMOT_v3(EnvExperiment):
             # Zeeman Slower
             self.ZeemanSlower.set(frequency=180 * MHz, amplitude=0.35)
 
+            # Single Frequency
+            self.Single_Freq.set(frequency= 80 * MHz, amplitude=1.0)
+
             # Probe
             self.Probe.set(frequency= 65 * MHz, amplitude=0.00)
 
@@ -72,9 +75,6 @@ class redMOT_v3(EnvExperiment):
                     self.MOT_Coils.load()
                 self.BMOT_TTL.on()
                 self.RMOT_TTL.on()
-                self.Broadband_On.pulse(10*ms)
-                self.Single_Freq.sw.off()
-            
 
             # Slice 1 duration
             delay(self.Loading_Time*ms)
@@ -84,14 +84,11 @@ class redMOT_v3(EnvExperiment):
             # with parallel:
                 # Magnetic field (2.2A)
                 # with sequential:
-            voltage = 3.36
+            voltage = 3.45
             self.MOT_Coils.write_dac(0,voltage) 
             self.MOT_Coils.load()
-            #0.52=3.5A, 0.91=3.0A, 1.44=2.5A, 1.95=2.1A, 2.0=2.0A, 2.2=1.8A, 2.42=1.6A, 2.55=1.5A, 3.05=1.0A, 3.36=0.7A
 
                 # Zeeman Slower
-                # with sequential:
-            # self.ZeemanSlower.set_att(31.9)
             self.ZeemanSlower.set(frequency=180 * MHz, amplitude=0.0)
 
             # BMOT
@@ -110,7 +107,7 @@ class redMOT_v3(EnvExperiment):
             delay(self.Holding_Time*ms)
 
             # **************************** Slice 4: Compression ****************************
-            voltage_com = 2.55
+            voltage_com = 2.75
             steps_com = 8
             t = 8/steps_com
             change = (voltage - voltage_com)/steps_com
@@ -123,16 +120,13 @@ class redMOT_v3(EnvExperiment):
             #0.52=3.5A, 0.91=3.0A, 1.44=2.5A, 1.95=2.1A, 2.0=2.0A, 2.2=1.8A, 2.42=1.6A, 2.55=1.5A, 3.05=1.0A, 3.36=0.7A
 
             # **************************** Slice 5: Single Frequency ****************************
-            with parallel:
-                self.Broadband_Off.pulse(10*ms)
-                self.Single_Freq.sw.on()
+            self.Single_Freq.sw.on()
 
             delay(10*ms)
 
             # **************************** Slice 6: Shutter delay ****************************
             with parallel:
                 self.RMOT_TTL.off()
-                self.Single_Freq.sw.off()
                 self.BMOT_TTL.on()
             delay(3*ms)
 

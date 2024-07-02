@@ -57,7 +57,7 @@ class redMOT_v1(EnvExperiment):
         for i in range(int64(self.Cycle)):
             # **************************** Slice 1: Loading ****************************
             # BMOT
-            self.BMOT_AOM.set(frequency=90*MHz, amplitude=0.05)
+            self.BMOT_AOM.set(frequency=90*MHz, amplitude=0.06)
 
             # Zeeman Slower
             self.ZeemanSlower.set(frequency=180 * MHz, amplitude=0.35)
@@ -87,7 +87,6 @@ class redMOT_v1(EnvExperiment):
             voltage = 3.45
             self.MOT_Coils.write_dac(0,voltage) 
             self.MOT_Coils.load()
-            #0.52=3.5A, 0.91=3.0A, 1.44=2.5A, 1.95=2.1A, 2.0=2.0A, 2.2=1.8A, 2.42=1.6A, 2.55=1.5A, 3.05=1.0A, 3.36=0.7A
 
                 # Zeeman Slower
                 # with sequential:
@@ -99,8 +98,8 @@ class redMOT_v1(EnvExperiment):
             steps = self.Transfer_Time
             t = self.Transfer_Time/steps
             for i in range(int64(steps)):
-                amp_steps = 0.09/steps
-                amp = 0.09 - ((i+1) * amp_steps)
+                amp_steps = 0.06/steps
+                amp = 0.06 - ((i+1) * amp_steps)
                 self.BMOT_AOM.set(frequency=90*MHz, amplitude=amp)
                 delay(t*ms)
 
@@ -130,18 +129,18 @@ class redMOT_v1(EnvExperiment):
             # **************************** Slice 6: Shutter delay ****************************
             with parallel:
                 with sequential:
-                    self.MOT_Coils.write_dac(0,4.07) 
+                    self.MOT_Coils.write_dac(0,1.0) 
                     self.MOT_Coils.load()
                 self.RMOT_TTL.off()
-                # self.BMOT_TTL.on()
+                self.BMOT_TTL.on()
             delay(3*ms)
 
             # **************************** Slice 5: Detection ****************************
             with parallel:
-                # self.BMOT_AOM.set(frequency=90*MHz, amplitude=0.05)
-                self.Probe.set(frequency= 65*MHz, amplitude=0.17)
+                self.BMOT_AOM.set(frequency=90*MHz, amplitude=0.06)
+                # self.Probe.set(frequency= 65*MHz, amplitude=0.17)
                 self.Camera.pulse(10*ms)
-            self.Probe.set(frequency= 65*MHz, amplitude=0.00)
+            # self.Probe.set(frequency= 65*MHz, amplitude=0.00)
             
             # **************************** Slice 7 ****************************
             

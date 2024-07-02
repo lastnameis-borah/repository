@@ -56,7 +56,7 @@ class redMOT_v2(EnvExperiment):
         for i in range(int64(self.Cycle)):
             # **************************** Slice 1: Loading ****************************
             # BMOT
-            self.BMOT_AOM.set(frequency=90*MHz, amplitude=0.09)
+            self.BMOT_AOM.set(frequency=90*MHz, amplitude=0.06)
 
             # Zeeman Slower
             self.ZeemanSlower.set(frequency=180 * MHz, amplitude=0.35)

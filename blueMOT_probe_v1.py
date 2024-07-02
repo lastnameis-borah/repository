@@ -2,7 +2,7 @@ from artiq.experiment import *
 from artiq.coredevice.ttl import TTLOut
 from numpy import int64
 
-class blueMOT_probe_v1(EnvExperiment):
+class blueMOT_probe_v2(EnvExperiment):
     def build(self):
         self.setattr_device("core")
         self.Camera:TTLOut=self.get_device("ttl10")
@@ -63,13 +63,25 @@ class blueMOT_probe_v1(EnvExperiment):
             delay(self.Loading_Time*ms)
 
             # **************************** Slice 2: Holding ****************************
+            steps = 20
+            t = 20/steps
+            for i in range(int64(steps)):
+                amp_steps = 0.06/steps
+                amp = 0.06 - ((i+1) * amp_steps)
+                self.BMOT_AOM.set(frequency=90*MHz, amplitude=amp)
+                delay(t*ms)
+
             self.BMOT_TTL.off()
-            self.BMOT_AOM.set(frequency=90*MHz, amplitude=0.00)
             self.ZeemanSlower.set(frequency=180 * MHz, amplitude=0.00)
             self.Ref.set(frequency= 90 * MHz, amplitude=0.00)
 
+
+            delay(500*ms)
+
             self.MOT_Coils.write_dac(0, 4.07)
             self.MOT_Coils.load()
+
+            
 
             # **************************** Slice 3: Detection ****************************
             with parallel:
@@ -78,10 +90,13 @@ class blueMOT_probe_v1(EnvExperiment):
 
             self.Probe.set(frequency= 65 * MHz, amplitude=0.00)
             self.BMOT_AOM.set(frequency=90*MHz, amplitude=0.06)
+
+            self.MOT_Coils.write_dac(0, 1.0)
+            self.MOT_Coils.load()
             
             # **************************** Slice 4 ****************************
             
-            delay(500*ms)
+            delay(1000*ms)
 
 
         print("We got BlueMOT!")
