@@ -108,20 +108,26 @@ class redMOT_v4(EnvExperiment):
 
             # **************************** Slice 4: Compression ****************************
             voltage_com = 2.75
+            amp_com = 0.2
             steps_com = 8
-            t = 8/steps_com
-            change = (voltage - voltage_com)/steps_com
-            for i in range(int64(steps_com)):
-                voltage = voltage - change
-                self.MOT_Coils.write_dac(0, voltage_com)
-                self.MOT_Coils.load()
-                delay(t*ms)
+            t_com = 8/steps_com
+            volt_steps = (voltage - voltage_com)/steps_com
+            amp_steps = (1.0-amp_com)/steps_com
 
-            #0.52=3.5A, 0.91=3.0A, 1.44=2.5A, 1.95=2.1A, 2.0=2.0A, 2.2=1.8A, 2.42=1.6A, 2.55=1.5A, 3.05=1.0A, 3.36=0.7A
+            with parallel:
+                for i in range(int64(steps_com)):
+                    voltage = voltage - volt_steps
+                    self.MOT_Coils.write_dac(0, voltage_com)
+                    self.MOT_Coils.load()
+                    delay(t_com*ms)
+
+                for i in range(int64(steps_com)):
+                    amp = 1.0 - ((i+1) * amp_steps)
+                    self.Single_Freq.set(frequency= 80 * MHz, amplitude=amp)
+                    delay(t_com*ms)
+
 
             # **************************** Slice 5: Single Frequency ****************************
-            self.Single_Freq.sw.on()
-
             delay(10*ms)
 
             # **************************** Slice 6: Shutter delay ****************************
