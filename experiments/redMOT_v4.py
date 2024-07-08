@@ -5,15 +5,13 @@ from numpy import int64
 class redMOT_v4(EnvExperiment):
     def build(self):
         self.setattr_device("core")
-        self.Camera:TTLOut=self.get_device("ttl15")
+        self.Camera:TTLOut=self.get_device("ttl10")
         self.BMOT_TTL:TTLOut=self.get_device("ttl6")
         self.RMOT_TTL:TTLOut=self.get_device("ttl8")
-        self.Broadband_On:TTLOut=self.get_device("ttl5")
-        self.Broadband_Off:TTLOut=self.get_device("ttl7")
         self.BMOT_AOM = self.get_device("urukul1_ch0")
         self.ZeemanSlower=self.get_device("urukul1_ch1")
-        self.Probe=self.get_device("urukul1_ch2")
-        self.Single_Freq=self.get_device("urukul1_ch3")
+        self.Single_Freq=self.get_device("urukul1_ch2")
+        self.Probe=self.get_device("urukul1_ch3")
         self.MOT_Coils=self.get_device("zotino0")
 
         self.setattr_argument("Cycle", NumberValue(default=1))
@@ -63,7 +61,8 @@ class redMOT_v4(EnvExperiment):
             self.ZeemanSlower.set(frequency=180 * MHz, amplitude=0.35)
 
             # Single Frequency
-            self.Single_Freq.set(frequency= 80 * MHz, amplitude=1.0)
+            red_amp = 0.13
+            self.Single_Freq.set(frequency= 80 * MHz, amplitude=red_amp)
 
             # Probe
             self.Probe.set(frequency= 65 * MHz, amplitude=0.00)
@@ -84,7 +83,7 @@ class redMOT_v4(EnvExperiment):
             # with parallel:
                 # Magnetic field (2.2A)
                 # with sequential:
-            voltage = 3.45
+            voltage = 2.75
             self.MOT_Coils.write_dac(0,voltage) 
             self.MOT_Coils.load()
 
@@ -107,34 +106,35 @@ class redMOT_v4(EnvExperiment):
             delay(self.Holding_Time*ms)
 
             # **************************** Slice 4: Compression ****************************
-            voltage_com = 2.75
-            amp_com = 0.2
-            steps_com = 8
-            t_com = 8/steps_com
-            volt_steps = (voltage - voltage_com)/steps_com
-            amp_steps = (1.0-amp_com)/steps_com
+            # voltage_com = 2.75
+            # amp_com = 0.13
+            # steps_com = 8
+            # t_com = 8/steps_com
+            # volt_steps = (voltage - voltage_com)/steps_com
+            # amp_steps = (red_amp-amp_com)/steps_com
 
-            with parallel:
-                for i in range(int64(steps_com)):
-                    voltage = voltage - volt_steps
-                    self.MOT_Coils.write_dac(0, voltage_com)
-                    self.MOT_Coils.load()
-                    delay(t_com*ms)
+            # with parallel:
+            #     for i in range(int64(steps_com)):
+            #         voltage = voltage - volt_steps
+            #         self.MOT_Coils.write_dac(0, voltage_com)
+            #         self.MOT_Coils.load()
+            #         delay(t_com*ms)
 
-                for i in range(int64(steps_com)):
-                    amp = 1.0 - ((i+1) * amp_steps)
-                    self.Single_Freq.set(frequency= 80 * MHz, amplitude=amp)
-                    delay(t_com*ms)
+            #     for i in range(int64(steps_com)):
+            #         amp = 1.0 - ((i+1) * amp_steps)
+            #         self.Single_Freq.set(frequency= 80 * MHz, amplitude=amp)
+            #         delay(t_com*ms)
+            #         print(amp)
 
 
-            # **************************** Slice 5: Single Frequency ****************************
-            delay(10*ms)
+            # # **************************** Slice 5: Single Frequency ****************************
+            # delay(10*ms)
 
             # **************************** Slice 6: Shutter delay ****************************
             with parallel:
                 self.RMOT_TTL.off()
                 self.BMOT_TTL.on()
-            delay(3*ms)
+            delay(3.5*ms)
 
             # **************************** Slice 5: Detection ****************************
             with parallel:
@@ -142,8 +142,9 @@ class redMOT_v4(EnvExperiment):
                 self.BMOT_AOM.set(frequency=90*MHz, amplitude=0.06)
                 self.Camera.pulse(10*ms)
             # self.Probe.sw.off()
+            # self.BMOT_AOM.set(frequency=90*MHz, amplitude=0.00)
             
             # **************************** Slice 7 ****************************
-            delay(1000*ms)
+            delay(100*ms)
 
         print("RedMOT exp complete!!")
