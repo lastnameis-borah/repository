@@ -11,24 +11,29 @@ class AOM_and_TTL(EnvExperiment):
 
         self.BMOT=self.get_device("urukul1_ch0")
         self.ZeemanSlower=self.get_device("urukul1_ch1")
-        self.Probe=self.get_device("urukul1_ch2")
+        self.RMOT=self.get_device("urukul1_ch2")
+        self.Probe=self.get_device("urukul1_ch3")
 
         self.Repump707:TTLOut=self.get_device("ttl4")
         self.BMOT_TTL:TTLOut=self.get_device("ttl6")
         self.RMOT_TTL:TTLOut=self.get_device("ttl8")
         
 
-        self.setattr_argument("BMOT_Frequency", NumberValue())
-        self.setattr_argument("BMOT_Amplitude", NumberValue(default = 0.09))
-        self.setattr_argument("BMOT_Attenuation", NumberValue(default = 0.0))
+        self.setattr_argument("BMOT_Frequency", NumberValue(default = 90.0))
+        self.setattr_argument("BMOT_Amplitude", NumberValue(default = 0.06))
+        # self.setattr_argument("BMOT_Attenuation", NumberValue(default = 0.0))
 
-        self.setattr_argument("Zeeman_Frequency", NumberValue())
+        self.setattr_argument("Zeeman_Frequency", NumberValue(default = 180.0))
         self.setattr_argument("Zeeman_Amplitude", NumberValue(default = 0.35)) 
-        self.setattr_argument("Zeeman_Attenuation", NumberValue(default = 0.0))
+        # self.setattr_argument("Zeeman_Attenuation", NumberValue(default = 0.0))
 
-        self.setattr_argument("Probe_Frequency", NumberValue())
+        self.setattr_argument("RMOT_Frequency", NumberValue(default = 80.0))
+        self.setattr_argument("RMOT_Amplitude", NumberValue(default = 0.13)) 
+        # self.setattr_argument("RMOT_Attenuation", NumberValue(default = 0.0))
+
+        self.setattr_argument("Probe_Frequency", NumberValue(default = 65.0))
         self.setattr_argument("Probe_Amplitude", NumberValue(default = 0.17)) 
-        self.setattr_argument("Probe_Attenuation", NumberValue(default = 0.0))
+        # self.setattr_argument("Probe_Attenuation", NumberValue(default = 0.0))
 
     @kernel
     def run(self):
@@ -43,18 +48,23 @@ class AOM_and_TTL(EnvExperiment):
         self.ZeemanSlower.cpld.init()
         self.ZeemanSlower.init()
 
+        self.RMOT.cpld.init()
+        self.RMOT.init()
+
         self.Probe.cpld.init()
         self.Probe.init()
 
 
         self.BMOT.sw.on()
         self.ZeemanSlower.sw.on()
+        self.RMOT.sw.on()
         self.Probe.sw.on()
         # self.Flush.sw.on()
 
-        self.BMOT.set_att(self.BMOT_Attenuation)
-        self.ZeemanSlower.set_att(self.Zeeman_Attenuation)
-        self.Probe.set_att(self.Probe_Attenuation)
+        self.BMOT.set_att(0.0)
+        self.ZeemanSlower.set_att(0.0)
+        self.RMOT.set_att(0.0)
+        self.Probe.set_att(0.0)
         # self.Flush.set_att(self.Flush_Attenuation)
 
         
@@ -63,15 +73,15 @@ class AOM_and_TTL(EnvExperiment):
             self.BMOT_TTL.on()
             self.RMOT_TTL.on()
             with sequential:
-                self.MOT_Coils.write_dac(0, 1.0) #3.04
+                self.MOT_Coils.write_dac(0, 1.0)
                 self.MOT_Coils.load()
         
-        # with parallel:
-        #     with sequential: 
         self.BMOT.set(frequency= self.BMOT_Frequency * MHz, amplitude=self.BMOT_Amplitude)
-            # with sequential:
+
         self.ZeemanSlower.set(frequency=self.Zeeman_Frequency * MHz, amplitude=self.Zeeman_Amplitude)
-        # with sequential:
+
+        self.RMOT.set(frequency=self.RMOT_Frequency * MHz, amplitude=self.RMOT_Amplitude)
+
         self.Probe.set(frequency=self.Probe_Frequency * MHz, amplitude=self.Probe_Amplitude)
         
         
