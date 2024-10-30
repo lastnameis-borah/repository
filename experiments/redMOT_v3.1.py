@@ -151,17 +151,16 @@ class redMOT_v3_1(EnvExperiment):
             #             self.Repump679.off()
 
             for i in range(int64(steps_tr)):
-                amp_steps = 0.08/steps_tr
+                amp_steps = (0.08 - 0.01)/steps_tr
                 amp = 0.08 - ((i+1) * amp_steps)
                 self.BMOT_AOM.set(frequency=90*MHz, amplitude=amp)
                 delay(t_tr*ms)
-            self.BMOT_AOM.set(frequency=90*MHz, amplitude=0.01)
 
             delay(60*ms)
             with parallel:
-                    self.BMOT_TTL.off()
-                    self.Repump707.off()
-                    self.Repump679.off()
+                self.BMOT_TTL.off()
+                self.Repump707.off()
+                self.Repump679.off()
 
             delay(4*ms)
 
