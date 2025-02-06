@@ -6,6 +6,7 @@ class blueMOT_probe(EnvExperiment):
     def build(self):
         self.setattr_device("core")
         self.Camera:TTLOut=self.get_device("ttl15")
+        self.Probe_TTL:TTLOut=self.get_device("ttl8")
         self.BMOT_AOM = self.get_device("urukul1_ch0")
         self.ZeemanSlower=self.get_device("urukul1_ch1")
         self.Probe=self.get_device("urukul1_ch2")
@@ -58,14 +59,16 @@ class blueMOT_probe(EnvExperiment):
                     self.MOT_Coils.load()
 
             # Holding duration
-            # delay(3*ms)
+            self.Probe_TTL.on()
+            delay(3.0 *ms)
 
             # **************************** Slice 3: Detection ****************************
             with parallel:
                 self.Probe.sw.on()
-                self.Camera.pulse(1*ms)
-            self.Probe.sw.off()
-            
+            #     self.Camera.pulse(1*ms)
+            # self.Probe.sw.off()
+            # self.BMOT_AOM.sw.on()
+
             # **************************** Slice 4 ****************************
             delay(1000*ms)
 

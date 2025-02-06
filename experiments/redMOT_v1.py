@@ -5,7 +5,7 @@ from numpy import int64
 class redMOT_v1(EnvExperiment):
     def build(self):
         self.setattr_device("core")
-        self.Camera:TTLOut=self.get_device("ttl15")
+        self.Camera:TTLOut=self.get_device("ttl10")
         self.BMOT_TTL:TTLOut=self.get_device("ttl6")
         self.RMOT_TTL:TTLOut=self.get_device("ttl8")
         self.Broadband_On:TTLOut=self.get_device("ttl5")
@@ -84,7 +84,7 @@ class redMOT_v1(EnvExperiment):
             # with parallel:
                 # Magnetic field (2.2A)
                 # with sequential:
-            voltage = 3.45
+            voltage = 2.36
             self.MOT_Coils.write_dac(0,voltage) 
             self.MOT_Coils.load()
 
@@ -129,7 +129,7 @@ class redMOT_v1(EnvExperiment):
             # **************************** Slice 6: Shutter delay ****************************
             with parallel:
                 with sequential:
-                    self.MOT_Coils.write_dac(0,1.0) 
+                    self.MOT_Coils.write_dac(0, 1.0) 
                     self.MOT_Coils.load()
                 self.RMOT_TTL.off()
                 self.BMOT_TTL.on()

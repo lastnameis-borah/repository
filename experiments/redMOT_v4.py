@@ -2,21 +2,19 @@ from artiq.experiment import *
 from artiq.coredevice.ttl import TTLOut
 from numpy import int64
 
-class redMOT_v3_1(EnvExperiment):
+class redMOT_v4(EnvExperiment):
     def build(self):
         self.setattr_device("core")
         self.Camera:TTLOut=self.get_device("ttl10")
-        self.Pixelfly:TTLOut=self.get_device("ttl15")
+        self.Pixelfly:TTLOut=self.get_device("ttl11")
         self.BMOT_TTL:TTLOut=self.get_device("ttl6")
-        self.Probe_TTL:TTLOut=self.get_device("ttl8")
-        self.Broadband_On:TTLOut=self.get_device("ttl5")
-        self.Broadband_Off:TTLOut=self.get_device("ttl7")
+        self.RMOT_TTL:TTLOut=self.get_device("ttl8")
         self.Zeeman_Slower_TTL:TTLOut=self.get_device("ttl12")
         self.Repump707:TTLOut=self.get_device("ttl4")
         self.Repump679:TTLOut=self.get_device("ttl9")
         self.BMOT_AOM = self.get_device("urukul1_ch0")
         self.ZeemanSlower=self.get_device("urukul1_ch1")
-        self.Single_Freq=self.get_device("urukul1_ch2")
+        self.RMOT_AOM=self.get_device("urukul1_ch2")
         self.Probe=self.get_device("urukul1_ch3")
         self.MOT_Coil_1=self.get_device("zotino0")
         self.MOT_Coil_2=self.get_device("zotino0")
@@ -25,11 +23,11 @@ class redMOT_v3_1(EnvExperiment):
 
         self.setattr_argument("Cycle", NumberValue(default=1))
         self.setattr_argument("Probe_ON", NumberValue(default=1))
-        self.setattr_argument("Loading_Time", NumberValue(default=2000))
-        self.setattr_argument("Transfer_Time", NumberValue(default=15))
-        self.setattr_argument("Holding_Time", NumberValue(default=10))
-        self.setattr_argument("Compression_Time", NumberValue(default=10))
-        self.setattr_argument("Single_Freq_Time", NumberValue(default=20))
+        self.setattr_argument("Loading_Time", NumberValue(default=1000))
+        self.setattr_argument("Transfer_Time", NumberValue(default=5))
+        self.setattr_argument("Holding_Time", NumberValue(default=5))
+        self.setattr_argument("Compression_Time", NumberValue(default=8))
+        self.setattr_argument("Single_Freq_Time", NumberValue(default=10))
         self.setattr_argument("Time_of_Flight", NumberValue(default=0))
 
     @kernel
@@ -41,7 +39,7 @@ class redMOT_v3_1(EnvExperiment):
         self.Pixelfly.output()
         self.Camera.output()
         self.BMOT_TTL.output()
-        self.Probe_TTL.output()
+        self.RMOT_TTL.output()
         self.Zeeman_Slower_TTL.output()
         self.Repump707.output()
         self.MOT_Coil_1.init()
@@ -52,8 +50,8 @@ class redMOT_v3_1(EnvExperiment):
         self.ZeemanSlower.init()
         self.Probe.cpld.init()
         self.Probe.init()
-        self.Single_Freq.cpld.init()
-        self.Single_Freq.init()
+        self.RMOT_AOM.cpld.init()
+        self.RMOT_AOM.init()
 
         self.Ref.cpld.init()
         self.Ref.init()
@@ -61,13 +59,14 @@ class redMOT_v3_1(EnvExperiment):
         # Set the RF channels ON
         self.BMOT_AOM.sw.on()
         self.ZeemanSlower.sw.on()
+        self.RMOT_AOM.sw.on()
         self.Probe.sw.on()
 
         # Set the RF attenuation
         self.BMOT_AOM.set_att(0.0)
         self.ZeemanSlower.set_att(0.0)
         self.Probe.set_att(0.0)
-        self.Single_Freq.set_att(0.0)
+        self.RMOT_AOM.set_att(0.0)
 
         self.Ref.set(frequency=80 * MHz)
         self.Ref.set_att(10.0)
@@ -75,14 +74,15 @@ class redMOT_v3_1(EnvExperiment):
         for j in range(int64(self.Cycle)):
             # **************************** Slice 1: Loading ****************************
             delay(500*us)
-            # blue_amp = 0.08
-            self.BMOT_AOM.set(frequency=90 * MHz, amplitude=0.08)
-            self.ZeemanSlower.set(frequency=180 * MHz, amplitude=0.35)
-            self.Probe.set(frequency= 65 * MHz, amplitude=0.02)
-            self.Single_Freq.set(frequency= 80 * MHz, amplitude=0.35)
+            blue_amp = 0.08
+            self.BMOT_AOM.set(frequency=90*MHz, amplitude=blue_amp)
+            self.ZeemanSlower.set(frequency=180 * MHz, amplitude=0.5)
+            red_amp = 0.13
+            self.RMOT_AOM.set(frequency= 80 * MHz, amplitude=red_amp)
+            self.Probe.set(frequency= 65 * MHz, amplitude=0.00)
             
-            voltage_1 = 0.99
-            voltage_2 = 0.5
+            voltage_1 = 1.03
+            voltage_2 = 0.56
             self.MOT_Coil_1.write_dac(0, voltage_1)
             self.MOT_Coil_2.write_dac(1, voltage_2)
 
@@ -90,94 +90,80 @@ class redMOT_v3_1(EnvExperiment):
                 self.MOT_Coil_1.load()
                 self.MOT_Coil_2.load()
                 self.BMOT_TTL.on()
-                self.Probe_TTL.off()
-                self.Broadband_On.pulse(10*ms)
-                self.Single_Freq.sw.off()
+                # self.RMOT_TTL.on()
                 self.Zeeman_Slower_TTL.on()
                 self.Repump707.on()
                 self.Repump679.on()
 
             delay(self.Loading_Time*ms)
 
-            # **************************** Slice 2: Transfer ****************************
+            # # **************************** Slice 2: Transfer ****************************
             self.ZeemanSlower.set(frequency=180 * MHz, amplitude=0.00)
             self.Zeeman_Slower_TTL.off()
             delay(4.0*ms)
 
-            # voltage_1_Tr = 3.77
-            # voltage_2_Tr = 2.0
-            # self.MOT_Coil_1.write_dac(0, voltage_1_Tr)
-            # self.MOT_Coil_2.write_dac(1, voltage_2_Tr)
-
-            # steps_tr = self.Transfer_Time
-            # t_tr = self.Transfer_Time/steps_tr
-            # volt_1_steps = (voltage_1_Tr - voltage_1)/steps_tr
-            # volt_2_steps = (voltage_2_Tr - voltage_2)/steps_tr
-
-            # with parallel:
-            #     for i in range(int64(steps_tr)):
-            #         voltage_1 = voltage_1 + volt_1_steps
-            #         voltage_2 = voltage_2 + volt_2_steps
-            #         self.MOT_Coil_1.write_dac(0, voltage_1)
-            #         self.MOT_Coil_2.write_dac(1, voltage_2)
-            #         with parallel:
-            #             self.MOT_Coil_1.load()
-            #             self.MOT_Coil_2.load()
-            #         delay(t_tr*ms)
-            
-            #     for i in range(int64(steps_tr)):
-            #         amp_steps = 0.08/steps_tr
-            #         amp = 0.08 - ((i+1) * amp_steps)
-            #         self.BMOT_AOM.set(frequency=90*MHz, amplitude=amp)
-            #         delay(t_tr*ms)
-            #         if i == int64(steps_tr) - 4:
-            #             with parallel:
-            #                 self.BMOT_TTL.off()
-            #                 self.Repump707.off()
-            #                 self.Repump679.off()
-
-            
+            voltage_1_Tr = 3.77
+            voltage_2_Tr = 3.76
             steps_tr = self.Transfer_Time
             t_tr = self.Transfer_Time/steps_tr
-
-            for i in range(int64(steps_tr)):
-                amp_steps = (0.08 - 0.003)/steps_tr
-                amp = 0.08 - ((i+1) * amp_steps)
-                self.BMOT_AOM.set(frequency=90*MHz, amplitude=amp)
-                delay(t_tr*ms)
-
-            delay(80*ms)
+            volt_1_steps = (voltage_1_Tr - voltage_1)/steps_tr
+            volt_2_steps = (voltage_2_Tr - voltage_2)/steps_tr
 
             with parallel:
-                self.BMOT_TTL.off()
-                self.Repump707.off()
-                self.Repump679.off()
+                for i in range(int64(steps_tr)):
+                    voltage_1 = voltage_1 + volt_1_steps
+                    voltage_2 = voltage_2 + volt_2_steps
+                    self.MOT_Coil_1.write_dac(0, voltage_1)
+                    self.MOT_Coil_2.write_dac(1, voltage_2)
+                    with parallel:
+                        self.MOT_Coil_1.load()
+                        self.MOT_Coil_2.load()
+                    delay(t_tr*ms)
+            
+                for i in range(int64(steps_tr)):
+                    amp_steps = blue_amp/steps_tr
+                    amp = blue_amp - ((i+1) * amp_steps)
+                    self.BMOT_AOM.set(frequency=90*MHz, amplitude=amp)
+                    delay(t_tr*ms)
+                    if i == int64(steps_tr) - 4:
+                        with parallel:
+                            self.BMOT_TTL.off()
+                            self.Repump707.off()
+                            self.Repump679.off()
 
-            delay(4*ms)
+            # voltage_1_Tr = 3.77
+            # voltage_2_Tr = 3.76
+            # steps_tr = self.Transfer_Time
+            # t_tr = self.Transfer_Time/steps_tr
+            
+            # self.MOT_Coil_1.write_dac(0, voltage_1_Tr)
+            # self.MOT_Coil_2.write_dac(1, voltage_2_Tr)
+            # self.MOT_Coil_1.load()
+            # self.MOT_Coil_2.load()
+            
+            # for i in range(int64(steps_tr)):
+            #     amp_steps = 0.07/steps_tr
+            #     amp = 0.07 - ((i+1) * amp_steps)
+            #     self.BMOT_AOM.set(frequency=90*MHz, amplitude=amp)
+            #     delay(t_tr*ms)
+            #     if i == int64(steps_tr) - 4:
+            #         with parallel:
+            #             self.BMOT_TTL.off()
+            #             self.Zeeman_Slower_TTL.off()
+            #             self.Repump707.off()
+            #             self.Repump679.off()
 
-            voltage_1_Tr = 3.77
-            voltage_2_Tr = 4.04
-            self.MOT_Coil_1.write_dac(0, voltage_1_Tr)
-            self.MOT_Coil_2.write_dac(1, voltage_2_Tr)
-            self.MOT_Coil_1.load()
-            self.MOT_Coil_2.load()
-
-            # **************************** Slice 3: Holding ****************************
+            # # **************************** Slice 3: Holding ****************************
             delay(self.Holding_Time*ms)
 
-            # **************************** Slice 4: Compression ****************************
-            with parallel:
-                self.Broadband_Off.pulse(10*ms)
-                self.Single_Freq.sw.on()
-
-            voltage_1_com = 2.49
-            voltage_2_com = 2.23
-            red_amp = 0.35
-            amp_com = 0.02
+            # # **************************** Slice 4: Compression ****************************
+            voltage_1_com = 2.5
+            voltage_2_com = 2.26
+            amp_com = 0.01
             steps_com = self.Compression_Time
             t_com = self.Compression_Time/steps_com
-            volt_1_steps = (voltage_1_Tr - voltage_1_com)/steps_com
-            volt_2_steps = (voltage_2_Tr - voltage_2_com)/steps_com
+            volt_1_steps = (voltage_1 - voltage_1_com)/steps_com
+            volt_2_steps = (voltage_2 - voltage_2_com)/steps_com
             amp_steps = (red_amp-amp_com)/steps_com
 
             with parallel:
@@ -193,18 +179,17 @@ class redMOT_v3_1(EnvExperiment):
 
                 for i in range(int64(steps_com)):
                     amp = red_amp - ((i+1) * amp_steps)
-                    self.Single_Freq.set(frequency= 80.0 * MHz, amplitude=amp)
+                    self.RMOT_AOM.set(frequency= 80 * MHz, amplitude=amp)
                     delay(t_com*ms)
 
             # **************************** Slice 5: Single Frequency ****************************
-            self.Single_Freq.set(frequency= 80.2* MHz, amplitude=amp_com)
+            self.RMOT_AOM.set(frequency= 80.25 * MHz, amplitude=amp_com)
             delay(self.Single_Freq_Time*ms)
-            self.Single_Freq.sw.off()
 
             # **************************** Slice 5: Detection : MOT as Probe*****************************
             if self.Probe_ON == 0:
                 with parallel:
-                    self.Probe_TTL.off()
+                    self.RMOT_TTL.off()
                     self.BMOT_TTL.on()
                 delay(3.8*ms)
 
@@ -217,7 +202,7 @@ class redMOT_v3_1(EnvExperiment):
                 delay(self.Time_of_Flight*ms)
 
                 with parallel:
-                    self.BMOT_AOM.set(frequency=90*MHz, amplitude=0.08)
+                    self.BMOT_AOM.set(frequency=90*MHz, amplitude=blue_amp)
                     self.Pixelfly.pulse(5.0*ms)
                     self.Camera.pulse(3.0*ms)
 
@@ -226,38 +211,35 @@ class redMOT_v3_1(EnvExperiment):
 
             # **************************** Slice 5: Detection - Seperate Probe**************************
             if self.Probe_ON == 1:
+                # self.RMOT_TTL.off()
+                self.RMOT_AOM.set(frequency= 80.25 * MHz, amplitude=0.0)
+
                 self.MOT_Coil_1.write_dac(0, 4.055)
                 self.MOT_Coil_2.write_dac(1, 4.083)
                 with parallel:
                     self.MOT_Coil_1.load()
                     self.MOT_Coil_2.load()
-
+HELLO ANURAG! Hello Sir HOW ARE YOU I'm good Sir OKAY COME TO THE LAB THEN On My Way I'll wait you own me a pint if you dont show up Haha, I owe you loads of pint good
                 delay(self.Time_of_Flight*ms)
-
-                self.Probe_TTL.on()
-                delay(3.0 *ms)
 
                 with parallel:
                     self.Camera.on()
                     self.Pixelfly.on()
-                    self.Probe.set(frequency= 65 * MHz, amplitude=0.02)
-                    self.Ref.sw.on()
+                    self.Probe.set(frequency= 65 * MHz, amplitude=0.17)
                 
-                delay(1.0 *ms)
+                delay(1.0*ms)
                 
                 with parallel:
                     self.Pixelfly.off()
                     self.Camera.off()
-                    self.Ref.sw.off()
-                    self.Probe_TTL.off()
                 self.Probe.set(frequency= 65 * MHz, amplitude=0.00)
+
+                delay(100.0*ms)
+                self.BMOT_AOM.set(frequency=90*MHz, amplitude=blue_amp)
 
                 if j==int64(self.Cycle)-1:
                     print("RedMOT detected with Probe beam!!")
             
             # **************************** Slice 4 ****************************
-            delay(100.0*ms)
-            self.BMOT_AOM.set(frequency=90*MHz, amplitude=0.08)
-            self.Broadband_On.pulse(10*ms)
-            # self.BMOT_TTL.on()
-            delay(2000*ms)
+            delay(1000*ms)
+        print(self.Probe_ON)
