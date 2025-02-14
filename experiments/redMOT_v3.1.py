@@ -243,7 +243,7 @@ class redMOT_v3_1(EnvExperiment):
                     self.Probe.set(frequency= 65 * MHz, amplitude=0.02)
                     self.Ref.sw.on()
                 
-                delay(1.0 *ms)
+                delay(0.5 *ms)
                 
                 with parallel:
                     self.Pixelfly.off()
