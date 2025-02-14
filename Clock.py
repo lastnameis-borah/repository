@@ -18,6 +18,7 @@ class clock(EnvExperiment):
         self.ZeemanSlower=self.get_device("urukul1_ch1")
         self.Single_Freq=self.get_device("urukul1_ch2")
         self.Probe=self.get_device("urukul1_ch3")
+        self.Clock=self.get_device("urukul0_ch1")
         self.MOT_Coil_1=self.get_device("zotino0")
         self.MOT_Coil_2=self.get_device("zotino0")
 
@@ -200,6 +201,12 @@ class clock(EnvExperiment):
             self.Single_Freq.set(frequency= 80.2* MHz, amplitude=amp_com)
             delay(self.Single_Freq_Time*ms)
             self.Single_Freq.sw.off()
+
+
+            # **************************** Slice 5: Clock Interogation *****************************
+            self.Clock.set(frequency= 80.2 * MHz, amplitude=0.35)
+            
+
 
             # **************************** Slice 5: Detection : MOT as Probe*****************************
             if self.Probe_ON == 0:
