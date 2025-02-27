@@ -20,6 +20,7 @@ class redMOT_v3_1(EnvExperiment):
         self.Probe=self.get_device("urukul1_ch3")
         self.MOT_Coil_1=self.get_device("zotino0")
         self.MOT_Coil_2=self.get_device("zotino0")
+        self.Flush:TTLOut=self.get_device("ttl13")
 
         self.Ref = self.get_device("urukul0_ch3")
 
@@ -54,6 +55,7 @@ class redMOT_v3_1(EnvExperiment):
         self.Probe.init()
         self.Single_Freq.cpld.init()
         self.Single_Freq.init()
+        self.Flush.output()
 
         self.Ref.cpld.init()
         self.Ref.init()
@@ -91,17 +93,19 @@ class redMOT_v3_1(EnvExperiment):
                 self.MOT_Coil_2.load()
                 self.BMOT_TTL.on()
                 self.Probe_TTL.off()
-                self.Broadband_On.pulse(10*ms)
+                # self.Broadband_On.pulse(10*ms)
                 self.Single_Freq.sw.off()
                 self.Zeeman_Slower_TTL.on()
                 self.Repump707.on()
                 self.Repump679.on()
+                # self.Flush.off()
 
             delay(self.Loading_Time*ms)
 
             # **************************** Slice 2: Transfer ****************************
             self.ZeemanSlower.set(frequency=180 * MHz, amplitude=0.00)
             self.Zeeman_Slower_TTL.off()
+            # self.Flush.on()
             delay(4.0*ms)
 
             # voltage_1_Tr = 3.77
@@ -136,7 +140,6 @@ class redMOT_v3_1(EnvExperiment):
             #                 self.Repump707.off()
             #                 self.Repump679.off()
 
-            
             steps_tr = self.Transfer_Time
             t_tr = self.Transfer_Time/steps_tr
 
@@ -145,8 +148,9 @@ class redMOT_v3_1(EnvExperiment):
                 amp = 0.08 - ((i+1) * amp_steps)
                 self.BMOT_AOM.set(frequency=90*MHz, amplitude=amp)
                 delay(t_tr*ms)
+            
 
-            delay(80*ms)
+            delay(200*ms)
 
             with parallel:
                 self.BMOT_TTL.off()
@@ -193,13 +197,19 @@ class redMOT_v3_1(EnvExperiment):
 
                 for i in range(int64(steps_com)):
                     amp = red_amp - ((i+1) * amp_steps)
-                    self.Single_Freq.set(frequency= 80.0 * MHz, amplitude=amp)
+                    self.Single_Freq.set(frequency= 80.2 * MHz, amplitude=amp)
                     delay(t_com*ms)
 
             # **************************** Slice 5: Single Frequency ****************************
-            self.Single_Freq.set(frequency= 80.2* MHz, amplitude=amp_com)
+            # self.MOT_Coil_1.write_dac(0, 4.055)
+            # self.MOT_Coil_2.write_dac(1, 1.8)
+            # with parallel:
+            #     self.MOT_Coil_1.load()
+            #     self.MOT_Coil_2.load()
+            self.Single_Freq.set(frequency= 80.3* MHz, amplitude=amp_com)
             delay(self.Single_Freq_Time*ms)
             self.Single_Freq.sw.off()
+            
 
             # **************************** Slice 5: Detection : MOT as Probe*****************************
             if self.Probe_ON == 0:
@@ -227,15 +237,16 @@ class redMOT_v3_1(EnvExperiment):
             # **************************** Slice 5: Detection - Seperate Probe**************************
             if self.Probe_ON == 1:
                 self.MOT_Coil_1.write_dac(0, 4.055)
-                self.MOT_Coil_2.write_dac(1, 4.083)
+                self.MOT_Coil_2.write_dac(1, 4.09)
                 with parallel:
                     self.MOT_Coil_1.load()
                     self.MOT_Coil_2.load()
+                # self.Single_Freq.set(frequency= 80.3 * MHz, amplitude=0.0)
 
                 delay(self.Time_of_Flight*ms)
 
                 self.Probe_TTL.on()
-                delay(3.0 *ms)
+                delay(2.8*ms)
 
                 with parallel:
                     self.Camera.on()
@@ -250,7 +261,7 @@ class redMOT_v3_1(EnvExperiment):
                     self.Camera.off()
                     self.Ref.sw.off()
                     self.Probe_TTL.off()
-                self.Probe.set(frequency= 65 * MHz, amplitude=0.00)
+                    self.Probe.set(frequency= 65 * MHz, amplitude=0.00)
 
                 if j==int64(self.Cycle)-1:
                     print("RedMOT detected with Probe beam!!")
@@ -258,6 +269,7 @@ class redMOT_v3_1(EnvExperiment):
             # **************************** Slice 4 ****************************
             delay(100.0*ms)
             self.BMOT_AOM.set(frequency=90*MHz, amplitude=0.08)
+            self.Probe.set(frequency= 65 * MHz, amplitude=0.02)
             self.Broadband_On.pulse(10*ms)
             # self.BMOT_TTL.on()
-            delay(2000*ms)
+            delay(1000*ms)
