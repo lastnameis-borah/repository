@@ -203,7 +203,6 @@ class redMOT_v3_1(EnvExperiment):
                     freq = red_freq + ((i+1) * freq_steps)
                     self.Single_Freq.set(frequency= freq * MHz, amplitude=amp)
                     delay(t_com*ms)
-                    print(freq)
 
             # **************************** Slice 5: Single Frequency ****************************
             self.Single_Freq.set(frequency= 80.3* MHz, amplitude=amp_com)
