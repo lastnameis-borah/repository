@@ -178,11 +178,14 @@ class redMOT_v3_1(EnvExperiment):
             voltage_2_com = 2.23
             red_amp = 0.35
             amp_com = 0.02
+            red_freq = 80.0
+            red_freq_com = 80.2
             steps_com = self.Compression_Time
             t_com = self.Compression_Time/steps_com
             volt_1_steps = (voltage_1_Tr - voltage_1_com)/steps_com
             volt_2_steps = (voltage_2_Tr - voltage_2_com)/steps_com
             amp_steps = (red_amp-amp_com)/steps_com
+            freq_steps = (red_freq_com - red_freq)/steps_com
 
             with parallel:
                 for i in range(int64(steps_com)):
@@ -197,19 +200,15 @@ class redMOT_v3_1(EnvExperiment):
 
                 for i in range(int64(steps_com)):
                     amp = red_amp - ((i+1) * amp_steps)
-                    self.Single_Freq.set(frequency= 80.2 * MHz, amplitude=amp)
+                    freq = red_freq + ((i+1) * freq_steps)
+                    self.Single_Freq.set(frequency= freq * MHz, amplitude=amp)
                     delay(t_com*ms)
+                    print(freq)
 
             # **************************** Slice 5: Single Frequency ****************************
-            # self.MOT_Coil_1.write_dac(0, 4.055)
-            # self.MOT_Coil_2.write_dac(1, 1.8)
-            # with parallel:
-            #     self.MOT_Coil_1.load()
-            #     self.MOT_Coil_2.load()
             self.Single_Freq.set(frequency= 80.3* MHz, amplitude=amp_com)
             delay(self.Single_Freq_Time*ms)
             self.Single_Freq.sw.off()
-            
 
             # **************************** Slice 5: Detection : MOT as Probe*****************************
             if self.Probe_ON == 0:
