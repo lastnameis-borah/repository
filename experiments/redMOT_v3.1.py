@@ -239,7 +239,6 @@ class redMOT_v3_1(EnvExperiment):
                 with parallel:
                     self.MOT_Coil_1.load()
                     self.MOT_Coil_2.load()
-                # self.Single_Freq.set(frequency= 80.3 * MHz, amplitude=0.0)
 
                 delay(self.Time_of_Flight*ms)
 
