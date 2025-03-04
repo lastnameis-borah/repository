@@ -93,7 +93,7 @@ class redMOT_v3_1(EnvExperiment):
                 self.MOT_Coil_2.load()
                 self.BMOT_TTL.on()
                 self.Probe_TTL.off()
-                # self.Broadband_On.pulse(10*ms)
+                self.Broadband_On.pulse(10*ms)
                 self.Single_Freq.sw.off()
                 self.Zeeman_Slower_TTL.on()
                 self.Repump707.on()
@@ -149,7 +149,6 @@ class redMOT_v3_1(EnvExperiment):
                 self.BMOT_AOM.set(frequency=90*MHz, amplitude=amp)
                 delay(t_tr*ms)
             
-
             delay(200*ms)
 
             with parallel:
@@ -158,6 +157,7 @@ class redMOT_v3_1(EnvExperiment):
                 self.Repump679.off()
 
             delay(4*ms)
+            self.BMOT_AOM.set(frequency=90*MHz, amplitude=0.08)
 
             voltage_1_Tr = 3.77
             voltage_2_Tr = 4.04
@@ -179,7 +179,7 @@ class redMOT_v3_1(EnvExperiment):
             red_amp = 0.35
             amp_com = 0.02
             red_freq = 80.0
-            red_freq_com = 80.2
+            red_freq_com = 80.3
             steps_com = self.Compression_Time
             t_com = self.Compression_Time/steps_com
             volt_1_steps = (voltage_1_Tr - voltage_1_com)/steps_com
@@ -244,6 +244,7 @@ class redMOT_v3_1(EnvExperiment):
                 delay(self.Time_of_Flight*ms)
 
                 self.Probe_TTL.on()
+                self.BMOT_AOM.set(frequency=90*MHz, amplitude=0.00)
                 delay(2.8*ms)
 
                 with parallel:
