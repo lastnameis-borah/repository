@@ -201,11 +201,11 @@ class redMOT_v3_1(EnvExperiment):
                 for i in range(int64(steps_com)):
                     amp = red_amp - ((i+1) * amp_steps)
                     freq = red_freq + ((i+1) * freq_steps)
-                    self.Single_Freq.set(frequency= freq * MHz, amplitude=amp)
+                    self.Single_Freq.set(frequency=freq*MHz, amplitude=amp)
                     delay(t_com*ms)
 
             # **************************** Slice 5: Single Frequency ****************************
-            self.Single_Freq.set(frequency= 80.3* MHz, amplitude=amp_com)
+            self.Single_Freq.set(frequency=80.3*MHz, amplitude=amp_com)
             delay(self.Single_Freq_Time*ms)
             self.Single_Freq.sw.off()
 
@@ -249,7 +249,7 @@ class redMOT_v3_1(EnvExperiment):
                 with parallel:
                     self.Camera.on()
                     self.Pixelfly.on()
-                    self.Probe.set(frequency= 65 * MHz, amplitude=0.02)
+                    self.Probe.set(frequency=65*MHz, amplitude=0.02)
                     self.Ref.sw.on()
                 
                 delay(0.5 *ms)
@@ -259,7 +259,7 @@ class redMOT_v3_1(EnvExperiment):
                     self.Camera.off()
                     self.Ref.sw.off()
                     self.Probe_TTL.off()
-                    self.Probe.set(frequency= 65 * MHz, amplitude=0.00)
+                    self.Probe.set(frequency=65*MHz, amplitude=0.00)
 
                 if j==int64(self.Cycle)-1:
                     print("RedMOT detected with Probe beam!!")
@@ -267,7 +267,7 @@ class redMOT_v3_1(EnvExperiment):
             # **************************** Slice 4 ****************************
             delay(100.0*ms)
             self.BMOT_AOM.set(frequency=90*MHz, amplitude=0.08)
-            self.Probe.set(frequency= 65 * MHz, amplitude=0.02)
+            self.Probe.set(frequency= 65*MHz, amplitude=0.02)
             self.Broadband_On.pulse(10*ms)
             # self.BMOT_TTL.on()
             delay(1000*ms)
