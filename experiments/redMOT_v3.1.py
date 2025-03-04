@@ -76,7 +76,7 @@ class redMOT_v3_1(EnvExperiment):
 
         for j in range(int64(self.Cycle)):
             # **************************** Slice 1: Loading ****************************
-            delay(500*us)
+            delay(500*ms)
             # blue_amp = 0.08
             self.BMOT_AOM.set(frequency=90 * MHz, amplitude=0.08)
             self.ZeemanSlower.set(frequency=180 * MHz, amplitude=0.35)
@@ -106,7 +106,7 @@ class redMOT_v3_1(EnvExperiment):
             self.ZeemanSlower.set(frequency=180 * MHz, amplitude=0.00)
             self.Zeeman_Slower_TTL.off()
             # self.Flush.on()
-            delay(4.0*ms)
+            delay(100.0*ms)
 
             # voltage_1_Tr = 3.77
             # voltage_2_Tr = 2.0
@@ -142,12 +142,21 @@ class redMOT_v3_1(EnvExperiment):
 
             steps_tr = self.Transfer_Time
             t_tr = self.Transfer_Time/steps_tr
+            amp_steps = (0.08 - 0.003)/steps_tr
+            blue_freq = 90.0
+            blue_freq_tr = 90.2
+            freq_steps = (blue_freq_tr - blue_freq)/steps_tr
 
             for i in range(int64(steps_tr)):
-                amp_steps = (0.08 - 0.003)/steps_tr
                 amp = 0.08 - ((i+1) * amp_steps)
                 self.BMOT_AOM.set(frequency=90*MHz, amplitude=amp)
                 delay(t_tr*ms)
+
+            # for i in range(int64(steps_tr)):
+            #     amp = 0.08 - ((i+1) * amp_steps)
+            #     freq = blue_freq + ((i+1) * freq_steps)
+            #     self.BMOT_AOM.set(frequency=freq*MHz, amplitude=amp)
+            #     delay(t_tr*ms)
             
             delay(200*ms)
 
@@ -166,7 +175,7 @@ class redMOT_v3_1(EnvExperiment):
             self.MOT_Coil_1.load()
             self.MOT_Coil_2.load()
 
-            # **************************** Slice 3: Holding ****************************
+            # **************************** Slice 3: Broadband RedMOT ****************************
             delay(self.Holding_Time*ms)
 
             # **************************** Slice 4: Compression ****************************
