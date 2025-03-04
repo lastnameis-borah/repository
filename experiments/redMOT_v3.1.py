@@ -80,8 +80,8 @@ class redMOT_v3_1(EnvExperiment):
             # blue_amp = 0.08
             self.BMOT_AOM.set(frequency=90 * MHz, amplitude=0.08)
             self.ZeemanSlower.set(frequency=180 * MHz, amplitude=0.35)
-            self.Probe.set(frequency= 65 * MHz, amplitude=0.02)
-            self.Single_Freq.set(frequency= 80 * MHz, amplitude=0.35)
+            self.Probe.set(frequency=65 * MHz, amplitude=0.02)
+            self.Single_Freq.set(frequency=80 * MHz, amplitude=0.35)
             
             voltage_1 = 0.99
             voltage_2 = 0.5
