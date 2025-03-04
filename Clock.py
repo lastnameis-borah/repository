@@ -204,7 +204,7 @@ class clock(EnvExperiment):
 
 
             # **************************** Slice 5: Clock Interogation *****************************
-            self.Clock.set(frequency= 80.2 * MHz, amplitude=0.35)
+            self.Clock.set(frequency= 80.2 * MHz)
             
 
 
