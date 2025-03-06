@@ -84,7 +84,7 @@ class redMOT_v3_1(EnvExperiment):
             self.Single_Freq.set(frequency=80 * MHz, amplitude=0.35)
             
             voltage_1 = 0.976
-            voltage_2 = 0.5
+            voltage_2 = 0.53
             self.MOT_Coil_1.write_dac(0, voltage_1)
             self.MOT_Coil_2.write_dac(1, voltage_2)
 
@@ -171,7 +171,7 @@ class redMOT_v3_1(EnvExperiment):
             self.BMOT_AOM.set(frequency=90*MHz, amplitude=0.08)
 
             voltage_1_Tr = 4.012
-            voltage_2_Tr = 4.04
+            voltage_2_Tr = 4.037
             self.MOT_Coil_1.write_dac(0, voltage_1_Tr)
             self.MOT_Coil_2.write_dac(1, voltage_2_Tr)
             self.MOT_Coil_1.load()
@@ -246,7 +246,7 @@ class redMOT_v3_1(EnvExperiment):
             # **************************** Slice 5: Detection - Seperate Probe**************************
             if self.Probe_ON == 1:
                 self.MOT_Coil_1.write_dac(0, 4.051)
-                self.MOT_Coil_2.write_dac(1, 4.09)
+                self.MOT_Coil_2.write_dac(1, 4.088)
                 with parallel:
                     self.MOT_Coil_1.load()
                     self.MOT_Coil_2.load()
