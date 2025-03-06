@@ -221,7 +221,7 @@ class clock(EnvExperiment):
             # **************************** Slice 5: Clock Interrogation *****************************
             self.Clock.set(frequency=start_freq*MHz)
             start_freq += res
-            
+
             delay(self.Clock_Interrogation_Time*ms)
 
 
@@ -285,3 +285,6 @@ class clock(EnvExperiment):
             self.Broadband_On.pulse(10*ms)
             # self.BMOT_TTL.on()
             delay(2000*ms)
+
+
+            #asdsad
