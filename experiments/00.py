@@ -81,8 +81,8 @@ class Everything_ON(EnvExperiment):
         self.Probe.set_att(0.0)
         self.Clock.set_att(self.Clock_Attenuation)
         # self.Flush.set_att(self.Flush_Attenuation)
-        self.MOT_Coil_1.write_dac(0, 0.99)
-        self.MOT_Coil_2.write_dac(1, 0.5)
+        self.MOT_Coil_1.write_dac(0, 0.976)
+        self.MOT_Coil_2.write_dac(1, 0.53)
         
         with parallel:
             self.MOT_Coil_1.load()
@@ -107,8 +107,8 @@ class Everything_ON(EnvExperiment):
 
         if self.Sequence == 1:
             for i in range(int64(self.Cycle)):
-                self.MOT_Coil_1.write_dac(0, 0.99)
-                self.MOT_Coil_2.write_dac(1, 0.50)
+                self.MOT_Coil_1.write_dac(0, 0.976)
+                self.MOT_Coil_2.write_dac(1, 0.53)
 
                 with parallel:
                     self.MOT_Coil_1.load()
@@ -117,7 +117,7 @@ class Everything_ON(EnvExperiment):
 
                 delay(1000*ms)
 
-                self.MOT_Coil_1.write_dac(0, 2.49)
+                self.MOT_Coil_1.write_dac(0, 2.46)
                 self.MOT_Coil_2.write_dac(1, 2.23)
                 self.ZeemanSlower.set(frequency=self.Zeeman_Frequency * MHz, amplitude=0.0)
 

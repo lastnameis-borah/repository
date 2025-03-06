@@ -32,7 +32,12 @@ class clock(EnvExperiment):
         self.setattr_argument("Compression_Time", NumberValue(default=10))
         self.setattr_argument("Single_Freq_Time", NumberValue(default=20))
         self.setattr_argument("State_Preparation_Time", NumberValue(default=30))
+<<<<<<< HEAD
         # self.setattr_argument("Time_of_Flight", NumberValue(default=0))
+=======
+        self.setattr_argument("Clock_Interrogation_Time", NumberValue(default=10))
+        self.setattr_argument("Time_of_Flight", NumberValue(default=0))
+>>>>>>> 97573c595b99fb71a8a2bab686bdb048e664bcf0
 
     @kernel
     def run(self):
@@ -73,6 +78,11 @@ class clock(EnvExperiment):
 
         self.Ref.set(frequency=80 * MHz)
         self.Ref.set_att(10.0)
+
+        # Clock parameters
+        start_freq = 80.0
+        end_freq = 90.0
+        res = (end_freq - start_freq)/int64(self.Cycle)
 
         for j in range(int64(self.Cycle)):
             # **************************** Slice 1: Loading ****************************
@@ -210,16 +220,13 @@ class clock(EnvExperiment):
                 self.MOT_Coil_1.load()
                 self.MOT_Coil_2.load()
 
-            delay(self.self.State_Preparation_Time*ms)
+            delay(self.State_Preparation_Time*ms)
 
-            # **************************** Slice 5: Clock Interogation *****************************
-            start_freq = 80.0
-            end_freq = 90.0
-            res = (end_freq - start_freq)/int64(self.Cycle)
-            freq = start_freq
-            self.Clock.set(frequency=freq*MHz)
-            freq += res
-            print(freq)
+            # **************************** Slice 5: Clock Interrogation *****************************
+            self.Clock.set(frequency=start_freq*MHz)
+            start_freq += res
+            
+            delay(self.Clock_Interrogation_Time*ms)
 
 
             # **************************** Slice 5: Detection : MOT as Probe*****************************
