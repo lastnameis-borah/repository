@@ -286,3 +286,6 @@ class clock(EnvExperiment):
             # self.BMOT_TTL.on()
             delay(2000*ms)
             #asdsad
+
+            
+            #asdasd
