@@ -32,12 +32,8 @@ class clock(EnvExperiment):
         self.setattr_argument("Compression_Time", NumberValue(default=10))
         self.setattr_argument("Single_Freq_Time", NumberValue(default=20))
         self.setattr_argument("State_Preparation_Time", NumberValue(default=30))
-<<<<<<< HEAD
-        # self.setattr_argument("Time_of_Flight", NumberValue(default=0))
-=======
         self.setattr_argument("Clock_Interrogation_Time", NumberValue(default=10))
         self.setattr_argument("Time_of_Flight", NumberValue(default=0))
->>>>>>> 97573c595b99fb71a8a2bab686bdb048e664bcf0
 
     @kernel
     def run(self):
