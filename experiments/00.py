@@ -81,7 +81,7 @@ class Everything_ON(EnvExperiment):
         self.Probe.set_att(0.0)
         self.Clock.set_att(self.Clock_Attenuation)
         # self.Flush.set_att(self.Flush_Attenuation)
-        self.MOT_Coil_1.write_dac(0, 0.99)
+        self.MOT_Coil_1.write_dac(0, 0.976)
         self.MOT_Coil_2.write_dac(1, 0.5)
         
         with parallel:
