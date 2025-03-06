@@ -285,7 +285,4 @@ class clock(EnvExperiment):
             self.Broadband_On.pulse(10*ms)
             # self.BMOT_TTL.on()
             delay(2000*ms)
-
-            
-            #asdasd
             #asdsad
