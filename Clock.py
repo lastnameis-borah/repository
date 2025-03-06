@@ -32,7 +32,7 @@ class clock(EnvExperiment):
         self.setattr_argument("Compression_Time", NumberValue(default=10))
         self.setattr_argument("Single_Freq_Time", NumberValue(default=20))
         self.setattr_argument("State_Preparation_Time", NumberValue(default=30))
-        self.setattr_argument("Clock_Interogation_Time", NumberValue(default=10))
+        self.setattr_argument("Clock_Interrogation_Time", NumberValue(default=10))
         self.setattr_argument("Time_of_Flight", NumberValue(default=0))
 
     @kernel
@@ -218,11 +218,11 @@ class clock(EnvExperiment):
 
             delay(self.State_Preparation_Time*ms)
 
-            # **************************** Slice 5: Clock Interogation *****************************
+            # **************************** Slice 5: Clock Interrogation *****************************
             self.Clock.set(frequency=start_freq*MHz)
             start_freq += res
             
-            delay(self.Clock_Interogation_Time*ms)
+            delay(self.Clock_Interrogation_Time*ms)
 
 
             # **************************** Slice 5: Detection : MOT as Probe*****************************
