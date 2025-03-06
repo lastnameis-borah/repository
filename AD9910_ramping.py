@@ -38,10 +38,6 @@ from repository.lib.fragments.laser_control_sub_fragments import LibLaserAOM
 # if logger.level <= logging.INFO:
 #     import pprint
 
-
-# A copy of Charles' fragment with some more comments
-
-
 class AD9910Ramper(Fragment):
     """
     Trying to ramp the damn freq

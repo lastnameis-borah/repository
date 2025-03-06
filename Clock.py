@@ -32,7 +32,7 @@ class clock(EnvExperiment):
         self.setattr_argument("Compression_Time", NumberValue(default=10))
         self.setattr_argument("Single_Freq_Time", NumberValue(default=20))
         self.setattr_argument("State_Preparation_Time", NumberValue(default=30))
-        self.setattr_argument("Time_of_Flight", NumberValue(default=0))
+        # self.setattr_argument("Time_of_Flight", NumberValue(default=0))
 
     @kernel
     def run(self):
@@ -204,8 +204,8 @@ class clock(EnvExperiment):
             self.Single_Freq.sw.off()
 
             # **************************** Slice 5: State Preparation *****************************
-            self.MOT_Coil_1.write_dac(0, 4.055)
-            self.MOT_Coil_2.write_dac(1, 4.083)
+            self.MOT_Coil_1.write_dac(0, 7.076)
+            self.MOT_Coil_2.write_dac(1, 0.53)
             with parallel:
                 self.MOT_Coil_1.load()
                 self.MOT_Coil_2.load()
