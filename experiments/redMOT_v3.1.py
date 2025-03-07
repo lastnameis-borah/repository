@@ -106,7 +106,7 @@ class redMOT_v3_1(EnvExperiment):
             self.ZeemanSlower.set(frequency=180 * MHz, amplitude=0.00)
             self.Zeeman_Slower_TTL.off()
             # self.Flush.on()
-            delay(100.0*ms)
+            delay(4.0*ms)
 
             # voltage_1_Tr = 3.77
             # voltage_2_Tr = 2.0
