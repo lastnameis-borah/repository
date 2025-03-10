@@ -65,12 +65,14 @@ class clock(EnvExperiment):
         self.BMOT_AOM.sw.on()
         self.ZeemanSlower.sw.on()
         self.Probe.sw.on()
+        self.Clock.sw.on()
 
         # Set the RF attenuation
         self.BMOT_AOM.set_att(0.0)
         self.ZeemanSlower.set_att(0.0)
         self.Probe.set_att(0.0)
         self.Single_Freq.set_att(0.0)
+        self.Clock.set_att(0.0)
 
         self.Ref.set(frequency=80 * MHz)
         self.Ref.set_att(10.0)
