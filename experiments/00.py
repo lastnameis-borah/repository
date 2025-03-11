@@ -43,7 +43,7 @@ class Everything_ON(EnvExperiment):
         # self.setattr_argument("Probe_Attenuation", NumberValue(default = 0.0))
 
         self.setattr_argument("Clock_Frequency", NumberValue(default = 85.0))
-        self.setattr_argument("Clock_Attenuation", NumberValue(default = 20.0))
+        self.setattr_argument("Clock_Attenuation", NumberValue(default = 0.0))
 
     @kernel
     def run(self):
