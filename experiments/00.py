@@ -114,7 +114,7 @@ class Everything_ON(EnvExperiment):
                     self.MOT_Coil_1.load()
                     self.MOT_Coil_2.load()
                     self.ZeemanSlower.set(frequency=self.Zeeman_Frequency * MHz, amplitude=self.Zeeman_Amplitude)
-
+                self.Clock.sw.on()
                 delay(1000*ms)
 
                 self.MOT_Coil_1.write_dac(0, 2.46)
@@ -124,6 +124,7 @@ class Everything_ON(EnvExperiment):
                 with parallel:
                     self.MOT_Coil_1.load()
                     self.MOT_Coil_2.load()
+                self.Clock.sw.off()
                 delay(1000*ms)
 
         if self.Sequence == 2:
