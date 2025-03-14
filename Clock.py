@@ -18,7 +18,7 @@ class clock(EnvExperiment):
         self.ZeemanSlower=self.get_device("urukul1_ch1")
         self.Single_Freq=self.get_device("urukul1_ch2")
         self.Probe=self.get_device("urukul1_ch3")
-        self.Clock=self.get_device("urukul0_ch1")
+        self.Clock=self.get_device("urukul0_ch0")
         self.MOT_Coil_1=self.get_device("zotino0")
         self.MOT_Coil_2=self.get_device("zotino0")
 
@@ -57,6 +57,8 @@ class clock(EnvExperiment):
         self.Probe.init()
         self.Single_Freq.cpld.init()
         self.Single_Freq.init()
+        self.Clock.cpld.init()
+        self.Clock.init()
 
         self.Ref.cpld.init()
         self.Ref.init()
@@ -65,7 +67,6 @@ class clock(EnvExperiment):
         self.BMOT_AOM.sw.on()
         self.ZeemanSlower.sw.on()
         self.Probe.sw.on()
-        self.Clock.sw.on()
 
         # Set the RF attenuation
         self.BMOT_AOM.set_att(0.0)
@@ -78,21 +79,21 @@ class clock(EnvExperiment):
         self.Ref.set_att(10.0)
 
         # Clock parameters
-        start_freq = 80.0
-        end_freq = 90.0
+        start_freq = 85.5
+        end_freq = 84.5
         res = (end_freq - start_freq)/int64(self.Cycle)
 
         for j in range(int64(self.Cycle)):
             # **************************** Slice 1: Loading ****************************
-            delay(500*us)
+            delay(500*ms)
             # blue_amp = 0.08
             self.BMOT_AOM.set(frequency=90 * MHz, amplitude=0.08)
             self.ZeemanSlower.set(frequency=180 * MHz, amplitude=0.35)
             self.Probe.set(frequency= 65 * MHz, amplitude=0.02)
             self.Single_Freq.set(frequency= 80 * MHz, amplitude=0.35)
             
-            voltage_1 = 0.99
-            voltage_2 = 0.5
+            voltage_1 = 0.976
+            voltage_2 = 0.53
             self.MOT_Coil_1.write_dac(0, voltage_1)
             self.MOT_Coil_2.write_dac(1, voltage_2)
 
@@ -156,7 +157,7 @@ class clock(EnvExperiment):
                 self.BMOT_AOM.set(frequency=90*MHz, amplitude=amp)
                 delay(t_tr*ms)
 
-            delay(80*ms)
+            delay(200*ms)
 
             with parallel:
                 self.BMOT_TTL.off()
@@ -164,9 +165,10 @@ class clock(EnvExperiment):
                 self.Repump679.off()
 
             delay(4*ms)
+            self.BMOT_AOM.set(frequency=90*MHz, amplitude=0.08)
 
-            voltage_1_Tr = 3.77
-            voltage_2_Tr = 4.04
+            voltage_1_Tr = 4.012
+            voltage_2_Tr = 4.037
             self.MOT_Coil_1.write_dac(0, voltage_1_Tr)
             self.MOT_Coil_2.write_dac(1, voltage_2_Tr)
             self.MOT_Coil_1.load()
@@ -180,15 +182,18 @@ class clock(EnvExperiment):
                 self.Broadband_Off.pulse(10*ms)
                 self.Single_Freq.sw.on()
 
-            voltage_1_com = 2.49
+            voltage_1_com = 2.46
             voltage_2_com = 2.23
             red_amp = 0.35
             amp_com = 0.02
+            red_freq = 80.0
+            red_freq_com = 80.3
             steps_com = self.Compression_Time
             t_com = self.Compression_Time/steps_com
             volt_1_steps = (voltage_1_Tr - voltage_1_com)/steps_com
             volt_2_steps = (voltage_2_Tr - voltage_2_com)/steps_com
             amp_steps = (red_amp-amp_com)/steps_com
+            freq_steps = (red_freq_com - red_freq)/steps_com
 
             with parallel:
                 for i in range(int64(steps_com)):
@@ -203,11 +208,12 @@ class clock(EnvExperiment):
 
                 for i in range(int64(steps_com)):
                     amp = red_amp - ((i+1) * amp_steps)
-                    self.Single_Freq.set(frequency= 80.0 * MHz, amplitude=amp)
+                    freq = red_freq + ((i+1) * freq_steps)
+                    self.Single_Freq.set(frequency=freq*MHz, amplitude=amp)
                     delay(t_com*ms)
 
             # **************************** Slice 5: Single Frequency ****************************
-            self.Single_Freq.set(frequency= 80.2* MHz, amplitude=amp_com)
+            self.Single_Freq.set(frequency= 80.3* MHz, amplitude=amp_com)
             delay(self.Single_Freq_Time*ms)
             self.Single_Freq.sw.off()
 
@@ -221,10 +227,13 @@ class clock(EnvExperiment):
             delay(self.State_Preparation_Time*ms)
 
             # **************************** Slice 5: Clock Interrogation *****************************
+            self.Clock.sw.on()
             self.Clock.set(frequency=start_freq*MHz)
+            print("Clock Frequency: ", start_freq)
             start_freq += res
 
             delay(self.Clock_Interrogation_Time*ms)
+            self.Clock.sw.off()
 
 
             # **************************** Slice 5: Detection : MOT as Probe*****************************
@@ -252,8 +261,8 @@ class clock(EnvExperiment):
 
             # **************************** Slice 5: Detection - Seperate Probe**************************
             if self.Probe_ON == 1:
-                self.MOT_Coil_1.write_dac(0, 4.055)
-                self.MOT_Coil_2.write_dac(1, 4.083)
+                self.MOT_Coil_1.write_dac(0, 4.051)
+                self.MOT_Coil_2.write_dac(1, 4.088)
                 with parallel:
                     self.MOT_Coil_1.load()
                     self.MOT_Coil_2.load()
@@ -261,7 +270,8 @@ class clock(EnvExperiment):
                 delay(self.Time_of_Flight*ms)
 
                 self.Probe_TTL.on()
-                delay(3.0 *ms)
+                self.BMOT_AOM.set(frequency=90*MHz, amplitude=0.00)
+                delay(2.8 *ms)
 
                 with parallel:
                     self.Camera.on()
@@ -276,14 +286,15 @@ class clock(EnvExperiment):
                     self.Camera.off()
                     self.Ref.sw.off()
                     self.Probe_TTL.off()
-                self.Probe.set(frequency= 65 * MHz, amplitude=0.00)
+                    self.Probe.set(frequency= 65 * MHz, amplitude=0.00)
 
                 if j==int64(self.Cycle)-1:
-                    print("RedMOT detected with Probe beam!!")
+                    print("Lattice detected with Probe beam!!")
             
             # **************************** Slice 4 ****************************
             delay(100.0*ms)
             self.BMOT_AOM.set(frequency=90*MHz, amplitude=0.08)
+            self.Probe.set(frequency= 65 * MHz, amplitude=0.02)
             self.Broadband_On.pulse(10*ms)
             # self.BMOT_TTL.on()
-            delay(2000*ms)
+            delay(1000*ms)
