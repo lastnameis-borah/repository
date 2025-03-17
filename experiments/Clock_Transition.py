@@ -85,7 +85,7 @@ class clock_transition_lookup(EnvExperiment):
         end_freq = self.End_Frequency
         res = (end_freq - start_freq)/int64(self.Cycle)
 
-        for j in range(int64(self.Cycle)):
+        for j in range(int64(self.Cycle) + 1):
             # **************************** Slice 1: Loading ****************************
             delay(500*ms)
             # blue_amp = 0.08
@@ -198,7 +198,7 @@ class clock_transition_lookup(EnvExperiment):
             # **************************** Slice 5: Clock Interrogation *****************************
             self.Clock.sw.on()
             self.Clock.set(frequency=start_freq*MHz)
-            print("Clock Frequency: ", start_freq)
+            print("Clock Frequency: ", start_freq, "MHz")
             start_freq += res
 
             delay(self.Clock_Interrogation_Time*ms)
@@ -218,11 +218,11 @@ class clock_transition_lookup(EnvExperiment):
                     self.MOT_Coil_1.load()
                     self.MOT_Coil_2.load()
 
-                delay(self.Time_of_Flight*ms)
+                # delay(self.Time_of_Flight*ms)
 
                 with parallel:
                     self.BMOT_AOM.set(frequency=90*MHz, amplitude=0.08)
-                    self.Pixelfly.pulse(5.0*ms)
+                    self.Pixelfly.pulse(3.0*ms)
                     self.Camera.pulse(3.0*ms)
 
                 if j==int64(self.Cycle)-1:
@@ -245,7 +245,7 @@ class clock_transition_lookup(EnvExperiment):
                 with parallel:
                     self.Camera.on()
                     self.Pixelfly.on()
-                    self.Probe.set(frequency= 65 * MHz, amplitude=0.02)
+                    self.Probe.set(frequency= 65*MHz, amplitude=0.02)
                     self.Ref.sw.on()
                 
                 delay(0.5 *ms)
@@ -257,13 +257,13 @@ class clock_transition_lookup(EnvExperiment):
                     self.Probe_TTL.off()
                     self.Probe.set(frequency= 65 * MHz, amplitude=0.00)
 
-                if j==int64(self.Cycle)-1:
+                if j==int64(self.Cycle):
                     print("Lattice detected with Probe beam!!")
             
             # **************************** Slice 4 ****************************
             delay(100.0*ms)
             self.BMOT_AOM.set(frequency=90*MHz, amplitude=0.08)
-            self.Probe.set(frequency= 65 * MHz, amplitude=0.02)
+            self.Probe.set(frequency= 65*MHz, amplitude=0.02)
             self.Broadband_On.pulse(10*ms)
             # self.BMOT_TTL.on()
             delay(1000*ms)
