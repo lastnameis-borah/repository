@@ -226,7 +226,7 @@ class clock_transition_lookup(EnvExperiment):
                     self.Camera.pulse(3.0*ms)
 
                 if j==int64(self.Cycle)-1:
-                    print("RedMOT detected with MOT beam as Probe!!")
+                    print("Clock transition detected with MOT beam as Probe!!")
 
             # **************************** Slice 5: Detection - Seperate Probe**************************
             if self.Probe_ON == 1:
@@ -258,7 +258,7 @@ class clock_transition_lookup(EnvExperiment):
                     self.Probe.set(frequency= 65 * MHz, amplitude=0.00)
 
                 if j==int64(self.Cycle):
-                    print("Lattice detected with Probe beam!!")
+                    print("clock transition detected with Probe beam!!")
             
             # **************************** Slice 4 ****************************
             delay(100.0*ms)
