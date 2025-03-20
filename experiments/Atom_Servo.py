@@ -187,7 +187,7 @@ class clock_transition_lookup(EnvExperiment):
             self.Single_Freq.sw.off()
 
             # **************************** Slice 5: State Preparation *****************************
-            self.MOT_Coil_1.write_dac(0, 7.04)
+            self.MOT_Coil_1.write_dac(0, 7.076)
             self.MOT_Coil_2.write_dac(1, 0.53)
             with parallel:
                 self.MOT_Coil_1.load()
@@ -266,4 +266,4 @@ class clock_transition_lookup(EnvExperiment):
             self.Probe.set(frequency= 65*MHz, amplitude=0.02)
             self.Broadband_On.pulse(10*ms)
             # self.BMOT_TTL.on()
-            # delay(1000*ms)
+            delay(1000*ms)
