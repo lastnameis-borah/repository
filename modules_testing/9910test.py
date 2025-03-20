@@ -17,6 +17,8 @@ class TestAD9910(EnvExperiment):
         self.core.reset()
         self.core.break_realtime()
 
+        self.ad9910_0.sw.on()
+
         self.ad9910_0.cpld.init()
         self.ad9910_0.init()
         
