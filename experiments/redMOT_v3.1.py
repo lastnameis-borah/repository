@@ -76,7 +76,7 @@ class redMOT_v3_1(EnvExperiment):
 
         for j in range(int64(self.Cycle)):
             # **************************** Slice 1: Loading ****************************
-            delay(500*ms)
+            delay(0.5*ms)
             # blue_amp = 0.08
             self.BMOT_AOM.set(frequency=90 * MHz, amplitude=0.08)
             self.ZeemanSlower.set(frequency=180 * MHz, amplitude=0.35)
@@ -254,7 +254,7 @@ class redMOT_v3_1(EnvExperiment):
                 delay(self.Time_of_Flight*ms)
 
                 self.Probe_TTL.on()
-                self.BMOT_AOM.set(frequency=90*MHz, amplitude=0.00)
+                self.BMOT_AOM.set(frequency=10*MHz, amplitude=0.08)
                 delay(2.8*ms)
 
                 with parallel:
@@ -276,9 +276,9 @@ class redMOT_v3_1(EnvExperiment):
                     print("RedMOT detected with Probe beam!!")
             
             # **************************** Slice 4 ****************************
-            delay(100.0*ms)
+            # delay(100.0*ms)
             self.BMOT_AOM.set(frequency=90*MHz, amplitude=0.08)
             self.Probe.set(frequency= 65*MHz, amplitude=0.02)
             self.Broadband_On.pulse(10*ms)
             # self.BMOT_TTL.on()
-            delay(1000*ms)
+            # delay(1000*ms)
