@@ -81,8 +81,14 @@ class clock_transition_lookup(EnvExperiment):
         self.Ref.set_att(10.0)
 
         # Clock parameters
-        start_freq = self.Start_Frequency
-        end_freq = self.End_Frequency
+        # start_freq = self.Start_Frequency
+        # end_freq = self.End_Frequency
+        # res = (end_freq - start_freq)/int64(self.Cycle)
+        # start_freq = 85.477
+        # end_freq = 85.473
+
+        start_freq = 85.55
+        end_freq = 85.45
         res = (end_freq - start_freq)/int64(self.Cycle)
 
         for j in range(int64(self.Cycle) + 1):
@@ -256,14 +262,14 @@ class clock_transition_lookup(EnvExperiment):
                     self.Ref.sw.off()
                     self.Probe_TTL.off()
                     self.Probe.set(frequency= 65 * MHz, amplitude=0.00)
+                    self.BMOT_AOM.set(frequency=90*MHz, amplitude=0.08)
 
                 if j==int64(self.Cycle):
                     print("clock transition detected with Probe beam!!")
             
             # **************************** Slice 4 ****************************
             delay(4.0*ms)
-            self.BMOT_AOM.set(frequency=90*MHz, amplitude=0.08)
             self.Probe.set(frequency= 65*MHz, amplitude=0.02)
             self.Broadband_On.pulse(10*ms)
             # self.BMOT_TTL.on()
-            delay(1000*ms)
+            # delay(1000*ms)
