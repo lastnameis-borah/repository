@@ -32,8 +32,8 @@ class clock_transition_lookup(EnvExperiment):
         self.setattr_argument("Single_Freq_Time", NumberValue(default=10, unit="ms"))
         self.setattr_argument("State_Preparation_Time", NumberValue(default=40, unit="ms"))
         self.setattr_argument("Clock_Interrogation_Time", NumberValue(default=50, unit="ms"))
-        self.setattr_argument("Start_Frequency", NumberValue(default=85.0, unit="MHz", ndecimals=3))
-        self.setattr_argument("End_Frequency", NumberValue(default=84.0, unit="MHz", ndecimals=3))
+        self.setattr_argument("Start_Frequency", NumberValue(default=85.0, unit="MHz", ndecimals=4))
+        self.setattr_argument("End_Frequency", NumberValue(default=84.0, unit="MHz", ndecimals=4))
 
     @kernel
     def run(self):
