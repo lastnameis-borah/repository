@@ -21,21 +21,19 @@ class clock_transition_lookup(EnvExperiment):
         self.Clock=self.get_device("urukul0_ch0")
         self.MOT_Coil_1=self.get_device("zotino0")
         self.MOT_Coil_2=self.get_device("zotino0")
-
         self.Ref = self.get_device("urukul0_ch3")
 
         self.setattr_argument("Cycle", NumberValue(default=1))
         self.setattr_argument("Probe_ON", NumberValue(default=1))
-        self.setattr_argument("Loading_Time", NumberValue(default=2500, unit="ms"))
+        self.setattr_argument("Loading_Time", NumberValue(default=1000, unit="ms"))
         self.setattr_argument("Transfer_Time", NumberValue(default=40, unit="ms"))
         self.setattr_argument("Holding_Time", NumberValue(default=40, unit="ms"))
         self.setattr_argument("Compression_Time", NumberValue(default=8, unit="ms"))
         self.setattr_argument("Single_Freq_Time", NumberValue(default=10, unit="ms"))
         self.setattr_argument("State_Preparation_Time", NumberValue(default=40, unit="ms"))
         self.setattr_argument("Clock_Interrogation_Time", NumberValue(default=50, unit="ms"))
-        # self.setattr_argument("Time_of_Flight", NumberValue(default=0))
-        self.setattr_argument("Start_Frequency", NumberValue(default=0, unit="MHz"))
-        self.setattr_argument("End_Frequency", NumberValue(default=0, unit="MHz"))
+        self.setattr_argument("Start_Frequency", NumberValue(default=85.0, unit="MHz", ndecimals=3))
+        self.setattr_argument("End_Frequency", NumberValue(default=84.0, unit="MHz", ndecimals=3))
 
     @kernel
     def run(self):
@@ -84,8 +82,6 @@ class clock_transition_lookup(EnvExperiment):
         # start_freq = self.Start_Frequency
         # end_freq = self.End_Frequency
         # res = (end_freq - start_freq)/int64(self.Cycle)
-        # start_freq = 85.477
-        # end_freq = 85.473
 
         start_freq = 85.455
         end_freq = 85.445
@@ -224,8 +220,6 @@ class clock_transition_lookup(EnvExperiment):
                     self.MOT_Coil_1.load()
                     self.MOT_Coil_2.load()
 
-                # delay(self.Time_of_Flight*ms)
-
                 with parallel:
                     self.BMOT_AOM.set(frequency=90*MHz, amplitude=0.08)
                     self.Pixelfly.pulse(3.0*ms)
@@ -241,8 +235,6 @@ class clock_transition_lookup(EnvExperiment):
                 with parallel:
                     self.MOT_Coil_1.load()
                     self.MOT_Coil_2.load()
-
-                # delay(self.Time_of_Flight*ms)
 
                 self.Probe_TTL.on()
                 self.BMOT_AOM.set(frequency=10*MHz, amplitude=0.08)
