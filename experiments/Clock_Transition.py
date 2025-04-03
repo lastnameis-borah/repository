@@ -79,12 +79,8 @@ class clock_transition_lookup(EnvExperiment):
         self.Ref.set_att(10.0)
 
         # Clock parameters
-        # start_freq = self.Start_Frequency
-        # end_freq = self.End_Frequency
-        # res = (end_freq - start_freq)/int64(self.Cycle)
-
-        start_freq = 85.455
-        end_freq = 85.445
+        start_freq = self.Start_Frequency
+        end_freq = self.End_Frequency
         res = (end_freq - start_freq)/int64(self.Cycle)
 
         for j in range(int64(self.Cycle) + 1):
