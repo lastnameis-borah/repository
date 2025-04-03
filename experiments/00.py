@@ -23,11 +23,12 @@ class Everything_ON(EnvExperiment):
         self.RMOT_TTL:TTLOut=self.get_device("ttl8")
         self.Zeeman_Slower_TTL:TTLOut=self.get_device("ttl12")
         
-        self.setattr_argument("Sequence", NumberValue(default = 0.0))
-        self.setattr_argument("Cycle", NumberValue(default = 50))
+        self.setattr_argument("Cycle", NumberValue(default = 100))
+        self.setattr_argument("High_Low", BooleanValue(default=False))
+        self.setattr_argument("Idle_State", BooleanValue(default=False))
 
         self.setattr_argument("BMOT_Frequency", NumberValue(default = 90.0))
-        self.setattr_argument("BMOT_Amplitude", NumberValue(default = 0.07))
+        self.setattr_argument("BMOT_Amplitude", NumberValue(default = 0.08))
         # self.setattr_argument("BMOT_Attenuation", NumberValue(default = 0.0))
 
         self.setattr_argument("Zeeman_Frequency", NumberValue(default = 180.0))
@@ -35,14 +36,14 @@ class Everything_ON(EnvExperiment):
         # self.setattr_argument("Zeeman_Attenuation", NumberValue(default = 0.0))
 
         self.setattr_argument("RMOT_Frequency", NumberValue(default = 80.0))
-        self.setattr_argument("RMOT_Amplitude", NumberValue(default = 0.13)) 
+        self.setattr_argument("RMOT_Amplitude", NumberValue(default = 0.35)) 
         # self.setattr_argument("RMOT_Attenuation", NumberValue(default = 0.0))
 
         self.setattr_argument("Probe_Frequency", NumberValue(default = 65.0))
-        self.setattr_argument("Probe_Amplitude", NumberValue(default = 0.17)) 
+        self.setattr_argument("Probe_Amplitude", NumberValue(default = 0.02)) 
         # self.setattr_argument("Probe_Attenuation", NumberValue(default = 0.0))
 
-        self.setattr_argument("Clock_Frequency", NumberValue(default = 85.0))
+        self.setattr_argument("Clock_Frequency", NumberValue(default = 85.47))
         self.setattr_argument("Clock_Attenuation", NumberValue(default = 0.0))
 
     @kernel
@@ -105,7 +106,7 @@ class Everything_ON(EnvExperiment):
 
         delay(1000*ms)
 
-        if self.Sequence == 1:
+        if self.High_Low == True:
             for i in range(int64(self.Cycle)):
                 self.MOT_Coil_1.write_dac(0, 0.976)
                 self.MOT_Coil_2.write_dac(1, 0.53)
@@ -127,15 +128,7 @@ class Everything_ON(EnvExperiment):
                 self.Clock.sw.off()
                 delay(1000*ms)
 
-        if self.Sequence == 2:
-            self.MOT_Coil_1.write_dac(0, 2.49)
-            self.MOT_Coil_2.write_dac(1, 2.27)
-
-            with parallel:
-                self.MOT_Coil_1.load()
-                self.MOT_Coil_2.load()
-
-        if self.Sequence == 3:
+        if self.Idle_State == True:
             self.MOT_Coil_1.write_dac(0, 4.055)
             self.MOT_Coil_2.write_dac(1, 4.083)
 
