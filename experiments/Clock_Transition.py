@@ -204,7 +204,7 @@ class clock_transition_lookup(EnvExperiment):
             # **************************** Slice 5: Clock Interrogation *****************************
             self.Clock.sw.on()
             self.Clock.set(frequency=start_freq*MHz)
-            print("Clock Frequency is ", start_freq, "MHz for the ", j, "th cycle")
+            print("Clock Frequency:", start_freq, "MHz, Cycle:", j)
             start_freq += res
 
             delay(self.Clock_Interrogation_Time*ms)
