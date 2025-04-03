@@ -87,8 +87,8 @@ class clock_transition_lookup(EnvExperiment):
         # start_freq = 85.477
         # end_freq = 85.473
 
-        start_freq = 85.457
-        end_freq = 85.452
+        start_freq = 85.455
+        end_freq = 85.445
         res = (end_freq - start_freq)/int64(self.Cycle)
 
         for j in range(int64(self.Cycle) + 1):
@@ -204,7 +204,7 @@ class clock_transition_lookup(EnvExperiment):
             # **************************** Slice 5: Clock Interrogation *****************************
             self.Clock.sw.on()
             self.Clock.set(frequency=start_freq*MHz)
-            print("Clock Frequency is ", start_freq, "MHz for the cycle: ", j)
+            print("Clock Frequency:", start_freq, "MHz, Cycle:", j)
             start_freq += res
 
             delay(self.Clock_Interrogation_Time*ms)
