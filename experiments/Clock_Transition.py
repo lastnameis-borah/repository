@@ -87,8 +87,8 @@ class clock_transition_lookup(EnvExperiment):
         # start_freq = 85.477
         # end_freq = 85.473
 
-        start_freq = 85.5
-        end_freq = 85.494
+        start_freq = 85.51
+        end_freq = 85.41
         res = (end_freq - start_freq)/int64(self.Cycle)
 
         for j in range(int64(self.Cycle) + 1):
@@ -193,8 +193,8 @@ class clock_transition_lookup(EnvExperiment):
             self.Single_Freq.sw.off()
 
             # **************************** Slice 5: State Preparation *****************************
-            self.MOT_Coil_1.write_dac(0, 7.04)
-            self.MOT_Coil_2.write_dac(1, 0.53)
+            self.MOT_Coil_1.write_dac(0, 5.576)
+            self.MOT_Coil_2.write_dac(1, 2.23)
             with parallel:
                 self.MOT_Coil_1.load()
                 self.MOT_Coil_2.load()
