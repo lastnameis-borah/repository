@@ -19,7 +19,7 @@ class red_mod_rpc(EnvExperiment):
         self.modulation_freq = self.Modulation_Freq # 25 kHz in Hz
         self.freq_step = (self.stop_freq - self.start_freq) / (self.modulation_freq)  # MHz
         self.time_step = (1 / self.modulation_freq) * 1e6 # microseconds
-        return [int64(self.freq_step), int64(self.time_step)]
+        return int64(self.freq_step), int64(self.time_step)
 
     @kernel
     def run(self):
