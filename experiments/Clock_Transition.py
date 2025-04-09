@@ -25,15 +25,15 @@ class clock_transition_lookup(EnvExperiment):
 
         self.setattr_argument("Cycle", NumberValue(default=1))
         self.setattr_argument("Probe_ON", NumberValue(default=1))
-        self.setattr_argument("Loading_Time", NumberValue(default=1000, unit="ms"))
-        self.setattr_argument("Transfer_Time", NumberValue(default=40, unit="ms"))
-        self.setattr_argument("Holding_Time", NumberValue(default=40, unit="ms"))
-        self.setattr_argument("Compression_Time", NumberValue(default=8, unit="ms"))
-        self.setattr_argument("Single_Freq_Time", NumberValue(default=10, unit="ms"))
-        self.setattr_argument("State_Preparation_Time", NumberValue(default=40, unit="ms"))
-        self.setattr_argument("Clock_Interrogation_Time", NumberValue(default=50, unit="ms"))
-        self.setattr_argument("Start_Frequency", NumberValue(default=85.0, unit="MHz", ndecimals=4))
-        self.setattr_argument("End_Frequency", NumberValue(default=84.0, unit="MHz", ndecimals=4))
+        self.setattr_argument("Loading_Time", NumberValue(default=1000))
+        self.setattr_argument("Transfer_Time", NumberValue(default=40))
+        self.setattr_argument("Holding_Time", NumberValue(default=40))
+        self.setattr_argument("Compression_Time", NumberValue(default=8))
+        self.setattr_argument("Single_Freq_Time", NumberValue(default=10))
+        self.setattr_argument("State_Preparation_Time", NumberValue(default=40))
+        self.setattr_argument("Clock_Interrogation_Time", NumberValue(default=50))
+        self.setattr_argument("Start_Frequency", NumberValue(default=85.0, ndecimals=3))
+        self.setattr_argument("End_Frequency", NumberValue(default=84.0, ndecimals=3))
 
     @kernel
     def run(self):
@@ -180,7 +180,7 @@ class clock_transition_lookup(EnvExperiment):
                     delay(t_com*ms)
 
             # **************************** Slice 5: Single Frequency ****************************
-            self.Single_Freq.set(frequency= 80.3* MHz, amplitude=amp_com)
+            self.Single_Freq.set(frequency=80.3*MHz, amplitude=amp_com)
             delay(self.Single_Freq_Time*ms)
             self.Single_Freq.sw.off()
 
@@ -231,7 +231,7 @@ class clock_transition_lookup(EnvExperiment):
                 with parallel:
                     self.MOT_Coil_1.load()
                     self.MOT_Coil_2.load()
-
+                
                 self.Probe_TTL.on()
                 self.BMOT_AOM.set(frequency=10*MHz, amplitude=0.08)
                 delay(2.8 *ms)
@@ -250,14 +250,15 @@ class clock_transition_lookup(EnvExperiment):
                     self.Ref.sw.off()
                     self.Probe_TTL.off()
                     self.Probe.set(frequency= 65 * MHz, amplitude=0.00)
-                    self.BMOT_AOM.set(frequency=90*MHz, amplitude=0.08)
+                    
 
                 if j==int64(self.Cycle):
                     print("clock transition detected with Probe beam!!")
             
             # **************************** Slice 4 ****************************
-            delay(4.0*ms)
+            # delay(4.0*ms)
             self.Probe.set(frequency= 65*MHz, amplitude=0.02)
+            self.BMOT_AOM.set(frequency=90*MHz, amplitude=0.08)
             self.Broadband_On.pulse(10*ms)
             # self.BMOT_TTL.on()
-            # delay(1000*ms)
+            delay(100*ms)

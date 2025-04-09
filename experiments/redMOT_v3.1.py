@@ -219,7 +219,7 @@ class redMOT_v3_1(EnvExperiment):
             self.Single_Freq.set(frequency=80.3*MHz, amplitude=amp_com)
             delay(self.Single_Freq_Time*ms)
             self.Single_Freq.sw.off()
-
+            
             # **************************** Slice 5: Detection : MOT as Probe*****************************
             if self.Probe_ON == 0:
                 with parallel:
@@ -281,4 +281,4 @@ class redMOT_v3_1(EnvExperiment):
             self.Probe.set(frequency= 65*MHz, amplitude=0.02)
             self.Broadband_On.pulse(10*ms)
             # self.BMOT_TTL.on()
-            # delay(1000*ms)
+            delay(1000*ms)
