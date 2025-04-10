@@ -20,7 +20,7 @@ class MagneticTrapLifetime_v2(EnvExperiment):
 
         self.setattr_argument("Cycles", NumberValue(default = 1))
         self.setattr_argument("Loading_Time", NumberValue(default = 1000))
-        self.setattr_argument("Holding_Time", NumberValue(default = 10))
+        # self.setattr_argument("Holding_Time", NumberValue(default = 10))
 
     @kernel
     def run(self):
@@ -52,14 +52,17 @@ class MagneticTrapLifetime_v2(EnvExperiment):
         self.ZeemanSlower.set_att(0.0)
         self.Probe.set_att(0.0)
 
-        delay(0.5*ms)
-
+        delay(500*ms)
         holding_time = 0
 
         for i in range(int64(self.Cycles)):
             # --------------------------------------Loading---------------------------------
+            self.BMOT_AOM.set(frequency=90*MHz, amplitude=0.08)
+            self.ZeemanSlower.set(frequency=180*MHz, amplitude=0.35)
+
             self.MOT_Coil_1.write_dac(0, 0.976)
             self.MOT_Coil_2.write_dac(1, 0.53)
+
             with parallel:
                 self.BMOT.on()
                 self.Zeeman_Slower_TTL.on()
@@ -67,9 +70,6 @@ class MagneticTrapLifetime_v2(EnvExperiment):
                 self.Repump707.off()
                 self.MOT_Coil_1.load()
                 self.MOT_Coil_2.load()
-
-            self.BMOT_AOM.set(frequency=90*MHz, amplitude=0.08)
-            self.ZeemanSlower.set(frequency=180*MHz, amplitude=0.35)
             
             delay(self.Loading_Time* ms)
 
@@ -80,7 +80,6 @@ class MagneticTrapLifetime_v2(EnvExperiment):
                 # self.Flush.on()
             
             delay(holding_time*ms)
-            print("Holding Time: ", holding_time)
             holding_time += 500
 
             # --------------------------------------Detection--------------------------------
