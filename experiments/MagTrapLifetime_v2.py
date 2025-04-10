@@ -32,7 +32,7 @@ class MagneticTrapLifetime_v2(EnvExperiment):
         self.Pixelfly.output()
         self.BMOT.output()
         self.Repump707.output()
-        self.Flush.output()
+        # self.Flush.output()
         self.Zeeman_Slower_TTL.output()
         self.ZeemanSlower.cpld.init()
         self.ZeemanSlower.init()
@@ -51,65 +51,62 @@ class MagneticTrapLifetime_v2(EnvExperiment):
         self.BMOT_AOM.set_att(0.0)
         self.ZeemanSlower.set_att(0.0)
         self.Probe.set_att(0.0)
-        delay(1000*ms)
+
+        delay(0.5*ms)
+
+        holding_time = 0
 
         for i in range(int64(self.Cycles)):
-            # Slice 1
-            self.MOT_Coil_1.write_dac(0, 0.99)
-            self.MOT_Coil_2.write_dac(1, 0.5)
+            # --------------------------------------Loading---------------------------------
+            self.MOT_Coil_1.write_dac(0, 0.976)
+            self.MOT_Coil_2.write_dac(1, 0.53)
             with parallel:
                 self.BMOT.on()
                 self.Zeeman_Slower_TTL.on()
-                self.Flush.off()
+                # self.Flush.off()
                 self.Repump707.off()
                 self.MOT_Coil_1.load()
                 self.MOT_Coil_2.load()
 
-            self.BMOT_AOM.set(frequency= 90 * MHz, amplitude=0.08)
+            self.BMOT_AOM.set(frequency=90*MHz, amplitude=0.08)
             self.ZeemanSlower.set(frequency=180*MHz, amplitude=0.35)
             
             delay(self.Loading_Time* ms)
 
-            # Slice 2
+            # --------------------------------------Holding----------------------------------
             with parallel:
-                # self.BMOT_AOM.set(frequency= 90 * MHz, amplitude=0.0)
                 self.Zeeman_Slower_TTL.off()
                 self.BMOT.off()
-                self.Flush.on()
-            self.ZeemanSlower.set(frequency=180*MHz, amplitude=0.0)
-            delay(self.Holding_Time * ms)
+                # self.Flush.on()
+            
+            delay(holding_time*ms)
+            print("Holding Time: ", holding_time)
+            holding_time += 500
 
-            with parallel:
-                self.BMOT.on()
-                self.Repump707.on()
-                # self.Probe_TTL.on()
-            delay(3.0 *ms)
-
-            ############### Detection #######################
-            # self.MOT_Coil_1.write_dac(0, 4.055)
-            # self.MOT_Coil_2.write_dac(1, 4.083)
-            # with parallel:
-            #     self.MOT_Coil_1.load()
-            #     self.MOT_Coil_2.load()
+            # --------------------------------------Detection--------------------------------
+            self.Probe_TTL.on()
+            self.Repump707.on()
+            self.BMOT_AOM.set(frequency=10*MHz, amplitude=0.08)
+            delay(2.8*ms)
 
             with parallel:
                 self.Camera.on()
                 self.Pixelfly.on()
-                self.Probe.set(frequency= 65 * MHz, amplitude=0.02)
+                self.Probe.set(frequency=65*MHz, amplitude=0.02)
             
-            delay(10.0 *ms)
+            delay(3.0 *ms)
             
             with parallel:
                 self.Pixelfly.off()
                 self.Camera.off()
                 self.Probe_TTL.off()
-            # self.Probe.set(frequency= 65 * MHz, amplitude=0.00)
+                self.Probe.set(frequency=65*MHz, amplitude=0.00)
 
-            # Headroom
+            # -------------------------------------Headroom----------------------------------
             with parallel:
-                # self.BMOT_AOM.set(frequency=90*MHz, amplitude=0.08)
                 self.Repump707.off()
-                self.Flush.off()
-            delay(10 * ms)
+                self.BMOT_AOM.set(frequency=90*MHz, amplitude=0.08)
+                self.Probe.set(frequency= 65*MHz, amplitude=0.02)
+
 
         print("Trap Lifetime Experiment Complete!")
