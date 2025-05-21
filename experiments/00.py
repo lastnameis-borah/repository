@@ -110,27 +110,28 @@ class Everything_ON(EnvExperiment):
 
         if self.High_Low == True:
             for i in range(int64(self.Cycle)):
-                self.MOT_Coil_1.write_dac(0, 0.976)
-                self.MOT_Coil_2.write_dac(1, 0.53)
+                self.MOT_Coil_1.write_dac(0, 1.07)
+                self.MOT_Coil_2.write_dac(1, 0.54)
 
                 with parallel:
                     self.MOT_Coil_1.load()
                     self.MOT_Coil_2.load()
                     self.ZeemanSlower.set(frequency=self.Zeeman_Frequency * MHz, amplitude=self.Zeeman_Amplitude)
                 self.Clock.sw.on()
-                delay(1000*ms)
+                delay(1500*ms)
 
-                self.MOT_Coil_1.write_dac(0, 2.46)
-                self.MOT_Coil_2.write_dac(1, 2.23)
+                self.MOT_Coil_1.write_dac(0, 2.54)
+                self.MOT_Coil_2.write_dac(1, 2.28)
                 self.ZeemanSlower.set(frequency=self.Zeeman_Frequency * MHz, amplitude=0.0)
 
                 with parallel:
                     self.MOT_Coil_1.load()
                     self.MOT_Coil_2.load()
                 self.Clock.sw.off()
-                delay(1000*ms)
+                delay(1500*ms)
 
         if self.Idle_State == True:
+            self.Clock.set_att(self.Clock_Attenuation)
             self.MOT_Coil_1.write_dac(0, 4.055)
             self.MOT_Coil_2.write_dac(1, 4.083)
 
