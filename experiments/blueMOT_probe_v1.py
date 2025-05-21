@@ -104,18 +104,18 @@ class blueMOT_probe_v1(EnvExperiment):
             
             delay(1.0*ms)
 
-            with parallel:
-                self.Pixelfly.off()
-                self.Camera.off()
-                self.Probe_TTL.off()
-            self.Probe.set(frequency= 65 * MHz, amplitude=0.00)
+            # with parallel:
+            #     self.Pixelfly.off()
+            #     self.Camera.off()
+            #     self.Probe_TTL.off()
+            # self.Probe.set(frequency= 65 * MHz, amplitude=0.00)
             
-            delay(100*ms)
-            self.BMOT_AOM.set(frequency=90*MHz, amplitude=0.08)
+            # delay(100*ms)
+            # self.BMOT_AOM.set(frequency=90*MHz, amplitude=0.08)
             
-            # **************************** Slice 4 ****************************
+            # # **************************** Slice 4 ****************************
             
-            delay(1000*ms)
+            # delay(1000*ms)
 
 
         print("We got BlueMOT!")

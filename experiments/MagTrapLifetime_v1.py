@@ -51,7 +51,7 @@ class MagneticTrapLifetime_v1(EnvExperiment):
         self.BMOT_AOM.set_att(0.0)
         self.ZeemanSlower.set_att(0.0)
         self.Probe.set_att(0.0)
-        delay(1000*ms)
+        delay(0.5*ms)
 
         for i in range(int64(self.Cycles)):
             # Slice 1
