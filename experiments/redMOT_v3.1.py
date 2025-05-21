@@ -83,8 +83,8 @@ class redMOT_v3_1(EnvExperiment):
             self.Probe.set(frequency=65 * MHz, amplitude=0.02)
             self.Single_Freq.set(frequency=80 * MHz, amplitude=0.35)
             
-            voltage_1 = 0.976
-            voltage_2 = 0.53
+            voltage_1 = 1.07
+            voltage_2 = 0.54
             self.MOT_Coil_1.write_dac(0, voltage_1)
             self.MOT_Coil_2.write_dac(1, voltage_2)
 
@@ -171,7 +171,7 @@ class redMOT_v3_1(EnvExperiment):
             self.BMOT_AOM.set(frequency=90*MHz, amplitude=0.08)
 
             voltage_1_Tr = 4.012
-            voltage_2_Tr = 4.037
+            voltage_2_Tr = 4.027
             self.MOT_Coil_1.write_dac(0, voltage_1_Tr)
             self.MOT_Coil_2.write_dac(1, voltage_2_Tr)
             self.MOT_Coil_1.load()
@@ -185,8 +185,8 @@ class redMOT_v3_1(EnvExperiment):
                 self.Broadband_Off.pulse(10*ms)
                 self.Single_Freq.sw.on()
 
-            voltage_1_com = 2.46
-            voltage_2_com = 2.23
+            voltage_1_com = 2.54
+            voltage_2_com = 2.28
             red_amp = 0.35
             amp_com = 0.02
             red_freq = 80.0
@@ -245,8 +245,8 @@ class redMOT_v3_1(EnvExperiment):
 
             # **************************** Slice 5: Detection - Seperate Probe**************************
             if self.Probe_ON == 1:
-                self.MOT_Coil_1.write_dac(0, 4.051)
-                self.MOT_Coil_2.write_dac(1, 4.088)
+                self.MOT_Coil_1.write_dac(0, 4.08)
+                self.MOT_Coil_2.write_dac(1, 4.11)
                 with parallel:
                     self.MOT_Coil_1.load()
                     self.MOT_Coil_2.load()
@@ -262,7 +262,7 @@ class redMOT_v3_1(EnvExperiment):
                     self.Pixelfly.on()
                     self.Probe.set(frequency=65*MHz, amplitude=0.02)
                     self.Ref.sw.on()
-                
+                # delay(1000000*ms)
                 delay(0.5 *ms)
                 
                 with parallel:
