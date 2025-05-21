@@ -18,7 +18,7 @@ class MagneticTrapLifetime_v2(EnvExperiment):
         self.MOT_Coil_1=self.get_device("zotino0")
         self.MOT_Coil_2=self.get_device("zotino0")
 
-        self.setattr_argument("Cycles", NumberValue(default = 1))
+        self.setattr_argument("Cycles", NumberValue(default = 10))
         self.setattr_argument("Loading_Time", NumberValue(default = 1000))
         # self.setattr_argument("Holding_Time", NumberValue(default = 10))
 
@@ -80,20 +80,21 @@ class MagneticTrapLifetime_v2(EnvExperiment):
                 # self.Flush.on()
             
             delay(holding_time*ms)
+            print("Holding Time: ", holding_time)
             holding_time += 500
 
             # --------------------------------------Detection--------------------------------
             self.Probe_TTL.on()
             self.Repump707.on()
             self.BMOT_AOM.set(frequency=10*MHz, amplitude=0.08)
-            delay(2.8*ms)
+            delay(4*ms)
 
             with parallel:
                 self.Camera.on()
                 self.Pixelfly.on()
                 self.Probe.set(frequency=65*MHz, amplitude=0.02)
             
-            delay(3.0 *ms)
+            delay(1.0 *ms)
             
             with parallel:
                 self.Pixelfly.off()
@@ -102,6 +103,7 @@ class MagneticTrapLifetime_v2(EnvExperiment):
                 self.Probe.set(frequency=65*MHz, amplitude=0.00)
 
             # -------------------------------------Headroom----------------------------------
+            delay(100*ms)
             with parallel:
                 self.Repump707.off()
                 self.BMOT_AOM.set(frequency=90*MHz, amplitude=0.08)
