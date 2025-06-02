@@ -185,8 +185,8 @@ class clock_transition_lookup(EnvExperiment):
             self.Single_Freq.sw.off()
 
             # **************************** Slice 5: State Preparation *****************************
-            self.MOT_Coil_1.write_dac(0, 5.58)# 5.58/2.28 = 1.85; 7.07/0.54 = 3.5;
-            self.MOT_Coil_2.write_dac(1, 2.28)
+            self.MOT_Coil_1.write_dac(0, 7.07)# 5.58/2.28 = 1.85; 7.07/0.54 = 3.5; 4.9/3.1 = 1;
+            self.MOT_Coil_2.write_dac(1, 0.54)
             with parallel:
                 self.MOT_Coil_1.load()
                 self.MOT_Coil_2.load()
