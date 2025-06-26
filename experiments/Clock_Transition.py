@@ -32,8 +32,8 @@ class clock_transition_lookup(EnvExperiment):
         self.setattr_argument("Single_Freq_Time", NumberValue(default=10))
         self.setattr_argument("State_Preparation_Time", NumberValue(default=40))
         self.setattr_argument("Clock_Interrogation_Time", NumberValue(default=50))
-        self.setattr_argument("Start_Frequency", NumberValue(default=85.0, ndecimals=3))
-        self.setattr_argument("End_Frequency", NumberValue(default=84.0, ndecimals=3))
+        self.setattr_argument("Start_Frequency", NumberValue(default=85.0, ndecimals=4))
+        self.setattr_argument("End_Frequency", NumberValue(default=84.0, ndecimals=4))
 
     @kernel
     def run(self):
@@ -185,8 +185,8 @@ class clock_transition_lookup(EnvExperiment):
             self.Single_Freq.sw.off()
 
             # **************************** Slice 5: State Preparation *****************************
-            self.MOT_Coil_1.write_dac(0, 7.07)# 5.58/2.28 = 1.85; 7.07/0.54 = 3.5; 4.9/3.1 = 1;
-            self.MOT_Coil_2.write_dac(1, 0.54)
+            self.MOT_Coil_1.write_dac(0, 5.56)# 5.56/2.28 = 1.85; 6.98/0.54 = 3.5; 4.9/3.1 = 1;
+            self.MOT_Coil_2.write_dac(1, 2.28)
             with parallel:
                 self.MOT_Coil_1.load()
                 self.MOT_Coil_2.load()
@@ -253,7 +253,7 @@ class clock_transition_lookup(EnvExperiment):
                     
 
                 if j==int64(self.Cycle):
-                    print("clock transition detected with Probe beam!!")
+                    print("clock transition scan completed!!")
             
             # **************************** Slice 4 ****************************
             # delay(4.0*ms)
