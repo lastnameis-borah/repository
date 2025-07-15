@@ -35,7 +35,7 @@ class clock_transition_lookup_V2(EnvExperiment):
 
         self.setattr_argument("Center_Frequency", NumberValue(default=80.2, ndecimals=4))
         self.setattr_argument("Step_Size", NumberValue(default=500, ndecimals=4))
-        self.setattr_argument("Scan_Range", NumberValue(default=100, ndecimals=4, unit="kHz")) 
+        self.setattr_argument("Scan_Range", NumberValue(default=100, ndecimals=4)) 
 
 
     @kernel
@@ -82,12 +82,10 @@ class clock_transition_lookup_V2(EnvExperiment):
         self.Ref.set_att(10.0)
 
         # Clock parameters
-
-
         step_size = self.Step_Size
         center_freq = self.Center_Frequency
-        scan_range = self.Scan_range
-        cycles = int64((scan_range*1e3)/step_size)
+        scan_range = self.Scan_Range
+        cycles = int64((scan_range)*1e3/step_size)
         start = center_freq - (cycles/2)*(step_size/1e6)
 
         for j in range(cycles + 1):
@@ -99,7 +97,7 @@ class clock_transition_lookup_V2(EnvExperiment):
             self.Probe.set(frequency= 65 * MHz, amplitude=0.02)
             self.Single_Freq.set(frequency= 80 * MHz, amplitude=0.35)
             
-            voltage_1 = 1.07
+            voltage_1 = 1.01
             voltage_2 = 0.54
             self.MOT_Coil_1.write_dac(0, voltage_1)
             self.MOT_Coil_2.write_dac(1, voltage_2)
@@ -192,7 +190,7 @@ class clock_transition_lookup_V2(EnvExperiment):
             self.Single_Freq.sw.off()
 
             # **************************** Slice 5: State Preparation *****************************
-            self.MOT_Coil_1.write_dac(0, 6.98)# 5.56/2.28 = 1.85; 6.98/0.54 = 3.5; 4.9/3.1 = 1;
+            self.MOT_Coil_1.write_dac(0, 6.9)# 5.56/2.28 = 1.85; 6.9/0.54 = 3.5; 4.9/3.1 = 1;
             self.MOT_Coil_2.write_dac(1, 0.54)
             with parallel:
                 self.MOT_Coil_1.load()
