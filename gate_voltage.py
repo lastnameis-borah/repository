@@ -36,9 +36,9 @@ def Gate_Voltage(given_current):
     predicted_voltage_value = model.predict(np.array([[given_current]]).reshape(-1, 1))  # Reshape given_y to a 2D array
     return predicted_voltage_value
 
-gate_voltage = float(input("Enter the current value: "))
+gate_voltage = float(input("Current required across the coils: "))
 
-print(f"{Gate_Voltage(gate_voltage)[0][0]:.2f}")
+print(f"Gate Voltage to be provided: {Gate_Voltage(gate_voltage)[0][0]:.2f}V")
 
 # # Plot the values
 # plt.plot(x1_values, y1_values)

@@ -1,0 +1,53 @@
+{
+    "_description": "Birmingham Jones",
+    "target": "kasli",
+    "min_artiq_version": "6.0",
+    "variant": "ubirmingham2",
+    "hw_rev": "v2.0",
+    "ext_ref_frequency": 10e6,
+    "base": "standalone",
+    "core_addr": "10.34.16.100",
+    "vendor": "QUARTIQ",
+    "peripherals": [
+        {
+            "type": "dio",
+            "board": "DIO_SMA",
+            "ports": [0],
+            "hw_rev": "v1.1",
+            "bank_direction_low": "input",
+            "bank_direction_high": "output",
+            "edge_counter": true
+        },
+        {
+            "type": "dio",
+            "board": "DIO_SMA",
+            "ports": [1],
+            "hw_rev": "v1.1",
+            "bank_direction_low": "output",
+            "bank_direction_high": "output"
+        },
+        {
+            "type": "sampler",
+            "ports": [2, 3]
+        },
+        {
+            "type": "urukul",
+            "hw_rev": "v1.4",
+            "variant": "AD9912",
+            "ports": [4, 5],
+            "dds": "ad9912",
+            "clk_sel": 2
+        },
+        {
+            "type": "urukul",
+            "dds": "ad9910",
+            "ports": [6, 7],
+            "clk_sel": 2
+        },
+        {
+            "type": "zotino",
+            "hw_rev": "v1.3",
+            "ports": [10]
+        }
+   ]
+}
